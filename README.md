@@ -1,2 +1,2 @@
-# Compilador NPR
-Compilador de expressões em notação polonesa reversa
+# Compilador RPN
+Compilador de expressões em notação polonesa inversa
