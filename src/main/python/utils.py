@@ -44,13 +44,13 @@ class Tamanho():
         return self.__height
 
     def set_w(self, w=0):
-        if x >= 0:
-            self.__x = x
+        if w >= 0:
+            self.__width = w
             return True
         return False
 
     def set_h(self, h=0):
-        if y >= 0:
-            self.__y = y
+        if h >= 0:
+            self.__height = h
             return True
         return False

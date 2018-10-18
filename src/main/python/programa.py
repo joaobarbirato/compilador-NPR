@@ -11,14 +11,14 @@ class Elemento():
     pass
 
 
-class Imagem(elemento):
+class Imagem(Elemento):
     """
         Classe de imagens
     """
     pass
 
 
-class Cor(elemento):
+class Cor(Elemento):
     """
         Classe de cores
     """
