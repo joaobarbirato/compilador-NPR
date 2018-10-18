@@ -1,2 +1,2 @@
-# Compilador RPN
-Compilador de expressões em notação polonesa inversa
+# Compilador Wallpaper
+Compilador de wallpapers e imagens diversas
