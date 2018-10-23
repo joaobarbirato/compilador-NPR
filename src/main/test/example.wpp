@@ -1,0 +1,9 @@
+Img img1
+
+Elementos = {
+	Retangulo = [
+		id = id
+		cor = x
+		tamanho = (larg, alt) 
+    ]
+}

@@ -25,3 +25,16 @@ hs_err_pid*
 # intellij
 .idea/
 
+# Antlr generate files
+src/main/wallpaper/wallpaper.tokens
+src/main/wallpaper/wallpaperLexer.py
+src/main/wallpaper/wallpaperLexer.tokens
+src/main/wallpaper/wallpaperListener.py
+src/main/wallpaper/wallpaperParser.py
+src/main/wallpaper/wallpaperVisitor.py
+
+# venv folder
+venv/
+
+# pycache
+src/main/wallpaper/__pycache__
