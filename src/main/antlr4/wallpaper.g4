@@ -24,19 +24,13 @@ IDENT : (LETRA | '_') ('_'| ALGARISMO | LETRA)* ;
 
 programa : declaracoes corpo ;
 
-declaracoes : 'Img' IDENT (IDENT)* ';' ;
+declaracoes : 'Img' IDENT (IDENT)* ';';
 
-corpo: (cmd)* ;
+corpo: (elementos)* salvarImagem;
 
-cmd: elementos |
-	conteudo |
-	forma |
-	atributos |
-salvarImagem;
+elementos : IDENT '=' '{' (conteudo)* '}';
 
-elementos : IDENT '=' '{' (conteudo)* '}' ';' ;
-
-conteudo : forma '=' '[' atributos ']' ';' ;
+conteudo : forma '=' '[' atributos ']';
 
 forma : retangulo | triangulo | circulo | texto ;
 
@@ -48,6 +42,12 @@ circulo: 'circulo';
 
 texto: 'texto';
 
-atributos : 'id' '=' IDENT (IDENT)* | 'cor' '=' HEX | 'tamanho' '=' '(' NUM_INT ',' NUM_INT ')';
+atributos : chave cor tamanho;
 
-salvarImagem : 'retornar' IDENT;
+chave : 'chave' '=' IDENT;
+
+cor: 'cor' '=' HEX;
+
+tamanho: 'tamanho' '=' '(' NUM_INT ',' NUM_INT ')';
+
+salvarImagem : 'retornar' IDENT ';';
