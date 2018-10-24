@@ -1,11 +1,19 @@
-Img img1;
+Img img;
+img.cor = 0x000000
+img.tamanho = (800, 600)
 
-Elementos = {
-	retangulo = [
+img.elementos = {
+    retangulo = [
 		chave = id
 		cor = 0x800080
-		tamanho = (12, 9)
+		tamanho = (15,30)
+    ]
+
+    texto = [
+		chave = is2
+		cor = 0x800080
+		tamanho = (15,30)
     ]
 }
 
-retornar ret;
+retornar img "nomeimagem.png";

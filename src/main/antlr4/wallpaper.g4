@@ -24,11 +24,11 @@ IDENT : (LETRA | '_') ('_'| ALGARISMO | LETRA)* ;
 
 programa : declaracoes corpo ;
 
-declaracoes : 'Img' IDENT (IDENT)* ';';
+declaracoes : 'Img' IDENT';' IDENT'.'cor IDENT'.'tamanho;
 
-corpo: (elementos)* salvarImagem;
+corpo: elementos salvarImagem;
 
-elementos : IDENT '=' '{' (conteudo)* '}';
+elementos : IDENT '.elementos = {' (conteudo)* '}';
 
 conteudo : forma '=' '[' atributos ']';
 
@@ -50,4 +50,4 @@ cor: 'cor' '=' HEX;
 
 tamanho: 'tamanho' '=' '(' NUM_INT ',' NUM_INT ')';
 
-salvarImagem : 'retornar' IDENT ';';
+salvarImagem : 'retornar' IDENT (('"'IDENT'.png"') | ('"'IDENT'.jpg"')) ';';
