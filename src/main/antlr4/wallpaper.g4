@@ -9,10 +9,10 @@
 
 grammar wallpaper;
 
-fragment LETRA: [a-zA-Z];
-fragment ALGARISMO: [0-9];
+fragment LETRA: 'a'..'z'|'A'..'Z';
+fragment ALGARISMO: '0'..'9';
 
-HEX : '0x' (ALGARISMO)+;
+HEX : '0x' (LETRA|ALGARISMO)*;
 
 NUM_INT : (ALGARISMO)+;
 NUM_REAL : (ALGARISMO)+ '.' (ALGARISMO)+;
@@ -22,32 +22,28 @@ ENDL : ([\n] | [\t] | [\r]) -> skip ;
 
 IDENT : (LETRA | '_') ('_'| ALGARISMO | LETRA)* ;
 
-programa : declaracoes corpo ;
+programa: declaracao corpo*;
 
-declaracoes : 'Img' IDENT';' IDENT'.'cor IDENT'.'tamanho;
+declaracao: imagem+;
 
-corpo: elementos salvarImagem;
+imagem:'Img' IDENT ';';
 
-elementos : IDENT '.elementos = {' (conteudo)* '}';
+corpo: IDENT '.' propriedade;
 
-conteudo : forma '=' '[' atributos ']';
+propriedade: cor | tamanho | nome | conteudo;
 
-forma : retangulo | triangulo | circulo | texto ;
+conteudo: 'conteudo' '=' '{' ( forma '=' '[' atributos ']' )+'}' | ;
 
-retangulo: 'retangulo';
+forma: 'retangulo' | 'triangulo' | 'circulo' | 'texto';
 
-triangulo: 'triangulo';
+atributos: chave cor tamanho;
 
-circulo: 'circulo';
-
-texto: 'texto';
-
-atributos : chave cor tamanho;
-
-chave : 'chave' '=' IDENT;
+chave: 'chave' '=' IDENT;
 
 cor: 'cor' '=' HEX;
 
 tamanho: 'tamanho' '=' '(' NUM_INT ',' NUM_INT ')';
 
-salvarImagem : 'retornar' IDENT (('"'IDENT'.png"') | ('"'IDENT'.jpg"')) ';';
+nome: 'nome' '=' '"' IDENT '.' tipo_arquivo '"';
+
+tipo_arquivo: 'jpg' | 'png';

@@ -7,82 +7,69 @@ from Symbol import Symbol
 class Semantico(wallpaperVisitor):
     def __init__(self):
         self.tabela_simbolos = None
+        self.imagem = None
 
     def visitPrograma(self, ctx:wallpaperParser.ProgramaContext):
         self.tabela_simbolos = SymbolTable()
         wallpaperVisitor.visitPrograma(self, ctx)
 
-    def visitDeclaracoes(self, ctx:wallpaperParser.DeclaracoesContext):
-        identificador = None
-        cor = None
-        tamanho = None
-
-        if (self.tabela_simbolos.exist(ctx.IDENT()[0].getText())):
-            print('O identificador ' + str(ctx.IDENT()[0]) + ' já foi declarado.')
+    def visitImagem(self, ctx:wallpaperParser.ImagemContext):
+        if self.tabela_simbolos.exist(ctx.IDENT().getText()):
+            print('O identificador ' + str(ctx.IDENT()) + ' já foi declarado.')
         else:
-            identificador = ctx.IDENT()[0].getText()
+            identificador = ctx.IDENT().getText()
+            self.tabela_simbolos.addSymbol(Symbol('Imagem', None, None, identificador, None, None, None))
 
-        if (ctx.IDENT()[1].getText() != ctx.IDENT()[0].getText()):
-            print('O identificador ' + str(ctx.IDENT()[1]) + ' não foi declarado anteriormente.')
+    def visitCorpo(self, ctx:wallpaperParser.CorpoContext):
+        imagem = self.tabela_simbolos.getSymbol(ctx.IDENT().getText())
+        if not imagem:
+            print('O identificador ' + str(ctx.IDENT()) + ' não foi foi declarado.')
         else:
-            cor = ctx.cor().HEX().getText()
+            self.imagem = imagem
+            tipo, valor = self.visitPropriedade(ctx.propriedade())
+            if tipo and valor:
+                self.tabela_simbolos.updateSymbol(imagem.identificador, tipo, valor)
 
-        if (ctx.IDENT()[2].getText() != ctx.IDENT()[0].getText()):
-            print('O identificador ' + str(ctx.IDENT()[2]) + ' não foi declarado anteriormente.')
-        else:
-            tamanho = (int(ctx.tamanho().NUM_INT(0).getText()), int(ctx.tamanho().NUM_INT(1).getText()))
+    def visitPropriedade(self, ctx: wallpaperParser.PropriedadeContext):
+        # verificar qual a propriedade
+        if ctx.cor():
+            return 'cor', ctx.cor().HEX().getText()
 
-        s = Symbol("Imagem", cor, tamanho, identificador, None, None)
-        self.tabela_simbolos.addSymbol(s)
+        elif ctx.tamanho():
+            tamanho = ctx.tamanho()
+            return 'tamanho', (int(tamanho.NUM_INT(0).getText()), int(tamanho.NUM_INT(1).getText()))
 
-    def visitElementos(self, ctx: wallpaperParser.ElementosContext):
-        if not (self.tabela_simbolos.exist(ctx.IDENT().getText())):
-            print('O identificador ' + str(ctx.IDENT()) + ' não foi declarado anteriormente.')
-
-        for c in ctx.conteudo():
-            forma, chave, cor, tamanho = self.visitConteudo(c)
-
-            if (self.tabela_simbolos.exist(chave)):
-                print("Erro o identificador " + chave + " já foi declarado")
+        elif ctx.nome():
+            if not self.tabela_simbolos.exist(ctx.nome().IDENT().getText()):
+                return 'nome', ctx.nome().IDENT().getText() + '.' + ctx.nome().tipo_arquivo().getText()
             else:
-                s = Symbol("Elemento", cor, tamanho, chave, forma, ctx.IDENT().getText())
-                self.tabela_simbolos.addSymbol(s)
+                print('O nome ' + str(ctx.IDENT()) + ' já existe.')
+                return None, None
 
-    def visitConteudo(self, ctx: wallpaperParser.ConteudoContext):
-        forma = wallpaperVisitor.visitForma(self, ctx.forma())
-        chave = self.visitChave(ctx.atributos().chave())
-        cor = self.visitCor(ctx.atributos().cor())
-        tamanho = self.visitTamanho(ctx.atributos().tamanho())
-
-        return forma, chave, cor, tamanho
-
-    # Visit a parse tree produced by wallpaperParser#retangulo.
-    def visitRetangulo(self, ctx:wallpaperParser.RetanguloContext):
-        return 'retangulo'
+        elif ctx.conteudo():
+            self.visitConteudo(ctx.conteudo())
+            return None, None
 
 
-    # Visit a parse tree produced by wallpaperParser#triangulo.
-    def visitTriangulo(self, ctx:wallpaperParser.TrianguloContext):
-        return 'triangulo'
+    def visitConteudo(self, ctx: wallpaperParser.ConteudoContext): #visitCorpo
+        i = 0
+        for forma in ctx.forma():
+            self.visitForma(forma)
+            self.visitAtributos(ctx.atributos(i))
+            i += 1
 
+    def visitForma(self, ctx:wallpaperParser.FormaContext): #visitImagem
+        forma = ctx.getText()
+        self.tabela_simbolos.addSymbol(Symbol('Forma', None, None, None, forma, self.imagem.identificador, None))
 
-    # Visit a parse tree produced by wallpaperParser#circulo.
-    def visitCirculo(self, ctx:wallpaperParser.CirculoContext):
-        return 'circulo'
+    def visitAtributos(self, ctx: wallpaperParser.AtributosContext): #visitPropriedade
+        if ctx.chave():
+            return 'chave', ctx.chave().getText()
 
+        elif ctx.cor():
+            return 'cor', ctx.cor().HEX().getText()
 
-    # Visit a parse tree produced by wallpaperParser#texto.
-    def visitTexto(self, ctx:wallpaperParser.TextoContext):
-        return 'texto'
+        elif ctx.tamanho():
+            tamanho = ctx.tamanho()
+            return 'tamanho', (int(tamanho.NUM_INT(0).getText()), int(tamanho.NUM_INT(1).getText()))
 
-    def visitChave(self, ctx:wallpaperParser.ChaveContext):
-        return ctx.IDENT().getText()
-
-    # Visit a parse tree produced by wallpaperParser#cor.
-    def visitCor(self, ctx:wallpaperParser.CorContext):
-        return ctx.HEX().getText()
-
-
-    # Visit a parse tree produced by wallpaperParser#tamanho.
-    def visitTamanho(self, ctx:wallpaperParser.TamanhoContext):
-        return (int(ctx.NUM_INT(0).getText()), int(ctx.NUM_INT(1).getText()))

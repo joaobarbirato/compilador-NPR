@@ -2,18 +2,18 @@ Img img;
 img.cor = 0x000000
 img.tamanho = (800, 600)
 
-img.elementos = {
+img.conteudo = {
     retangulo = [
-		chave = id
+		chave = id1
 		cor = 0x800080
 		tamanho = (15,30)
     ]
 
-    texto = [
-		chave = is2
-		cor = 0x800080
-		tamanho = (15,30)
+    circulo = [
+		chave = id2
+		cor = 0x800000
+		tamanho = (100,200)
     ]
 }
 
-retornar img "nomeimagem.png";
+img.nome = "nomeimagem.png"

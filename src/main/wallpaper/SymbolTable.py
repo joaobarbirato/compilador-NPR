@@ -16,13 +16,23 @@ class SymbolTable:
             self.symbols.append(symbol)
             return True
 
-    def getElementos(self, imagem):
-        elementos = []
+    def getSymbol(self, identificador):
         for s in self.symbols:
-            if s.tipo == 'Elementos' and s.imagem == imagem:
-                elementos.append(s)
-        return elementos
+            if s.identificador == identificador:
+                return s
+        return None
 
+    def updateSymbol(self, identificador, tipo, valor):
+        for s in self.symbols:
+            if s.identificador == identificador:
+                if tipo == 'chave':
+                    s.chave =valor
+                if tipo == 'cor':
+                    s.cor = valor
+                elif tipo == 'tamanho':
+                    s.tamanho = valor
+                elif tipo == 'nome':
+                    s.nome = valor
 
     # verifica se um identificador já foi declarado
     def exist(self, identificador):

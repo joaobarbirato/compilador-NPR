@@ -3,25 +3,28 @@ from PIL import Image, ImageDraw
 class Wallpaper:
     def __init__(self, simbolos):
         self.simbolos = simbolos
+        self.imagens = []
+        self.formas = []
+        print(self.simbolos)
 
     def run(self):
 
         def rgb(hex):
             return tuple(int(hex[i:i + 2], 16) for i in (0, 2, 4))
 
-        img = self.simbolos.symbols[0]
-        rgb(img.cor[2:])
+        for s in self.simbolos.symbols:
+            tipo = s.tipo
+            if tipo == "Imagem":
+                imagem = Image.new('RGB', s.tamanho, rgb(s.cor[2:]))
+                draw = ImageDraw.Draw(imagem)
+                self.imagens.append(s)
+            else:
+                if (s.forma == 'retangulo'):
+                    draw.rectangle((40, 40, 85, 85), fill=rgb(s.cor[2:]))
+                elif (s.forma == 'circulo'):
+                    draw.ellipse((90, 80, 500, 400), fill=rgb(s.cor[2:]))
+                self.formas.append(s)
 
-        elmt = self.simbolos.symbols[1]
-        print(rgb(elmt.cor[2:]))
-        print(img.tamanho)
-        print(rgb(img.cor[2:]))
-        imagem = Image.new('RGB', img.tamanho, rgb(img.cor[2:]))
 
-        draw = ImageDraw.Draw(imagem)
-
-        if(elmt.forma == 'retangulo'):
-            draw.rectangle((25, 25, 75, 75), fill=rgb(elmt.cor[2:]))
-
-        imagem.save('image.png', 'PNG')
+        imagem.save('imagem.png', 'PNG')
 

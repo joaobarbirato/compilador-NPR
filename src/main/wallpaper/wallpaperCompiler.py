@@ -16,9 +16,10 @@ def main(argv):
 
     analisador_semantico = Semantico()
     analisador_semantico.visitPrograma(tree)
+    print(analisador_semantico.tabela_simbolos)
 
-    w = Wallpaper(analisador_semantico.tabela_simbolos)
-    w.run()
+    # w = Wallpaper(analisador_semantico.tabela_simbolos)
+    # w.run()
 
 if __name__ == '__main__':
     main(sys.argv)
