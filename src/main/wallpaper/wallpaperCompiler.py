@@ -16,8 +16,23 @@ def main(argv):
 
     analisador_semantico = Semantico()
     analisador_semantico.visitPrograma(tree)
-    print(analisador_semantico.tabela_simbolos)
 
+    # prints (DEBUG)
+    print('imagens')
+    for tabela in analisador_semantico.imagens.tabelas:
+        print(tabela.nome_tabela)
+        for simbolo in tabela.simbolos:
+            print(simbolo.tipo, simbolo.nome, simbolo.valor)
+
+    print()
+
+    print('formas')
+    for tabela in analisador_semantico.formas.tabelas:
+        print(tabela.nome_tabela)
+        for simbolo in tabela.simbolos:
+            print(simbolo.tipo, simbolo.nome, simbolo.valor)
+
+    #TODO: ainda não esta rodando
     # w = Wallpaper(analisador_semantico.tabela_simbolos)
     # w.run()
 

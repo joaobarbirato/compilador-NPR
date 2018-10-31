@@ -1,75 +1,86 @@
 from wallpaperParser import wallpaperParser
 from wallpaperVisitor import wallpaperVisitor
-from SymbolTable import SymbolTable
-from Symbol import Symbol
+from Simbolo import Simbolo, TabelaSimbolo, ListaTabela
 
 
 class Semantico(wallpaperVisitor):
     def __init__(self):
-        self.tabela_simbolos = None
-        self.imagem = None
+        self.imagens = ListaTabela()
+        self.formas = ListaTabela()
+        # tabela auxiliar para guardar a tabela atual de imagem
+        # permite passar uma tabela pelas funções
+        self.tabela_imagem = None
+        # tabela auxiliar para guardar a tabela atual de forma
+        # permite passar uma tabela pelas funções
+        self.tabela_forma = None
 
-    def visitPrograma(self, ctx:wallpaperParser.ProgramaContext):
-        self.tabela_simbolos = SymbolTable()
+    def visitPrograma(self, ctx: wallpaperParser.ProgramaContext):
         wallpaperVisitor.visitPrograma(self, ctx)
 
-    def visitImagem(self, ctx:wallpaperParser.ImagemContext):
-        if self.tabela_simbolos.exist(ctx.IDENT().getText()):
+    def visitImagem(self, ctx: wallpaperParser.ImagemContext):
+        if self.imagens.exist(ctx.IDENT()):
             print('O identificador ' + str(ctx.IDENT()) + ' já foi declarado.')
         else:
-            identificador = ctx.IDENT().getText()
-            self.tabela_simbolos.addSymbol(Symbol('Imagem', None, None, identificador, None, None, None))
+            self.imagens.addTabela(TabelaSimbolo(ctx.IDENT().getText()))
 
     def visitCorpo(self, ctx:wallpaperParser.CorpoContext):
-        imagem = self.tabela_simbolos.getSymbol(ctx.IDENT().getText())
-        if not imagem:
-            print('O identificador ' + str(ctx.IDENT()) + ' não foi foi declarado.')
+        if not self.imagens.exist(ctx.IDENT()):
+            print('O identificador ' + str(ctx.IDENT()) + ' não foi declarado.')
         else:
-            self.imagem = imagem
-            tipo, valor = self.visitPropriedade(ctx.propriedade())
-            if tipo and valor:
-                self.tabela_simbolos.updateSymbol(imagem.identificador, tipo, valor)
+            self.tabela_imagem = self.imagens.getTabela(ctx.IDENT())
+            self.visitPropriedade(ctx.propriedade())
 
+    # TODO: Verificar para cada imagem que ela somente pode ter
+    # TODO: 1 cor, 1 tamanho etc...
     def visitPropriedade(self, ctx: wallpaperParser.PropriedadeContext):
-        # verificar qual a propriedade
         if ctx.cor():
-            return 'cor', ctx.cor().HEX().getText()
+            self.tabela_imagem.addSimbolo(Simbolo('cor', '', ctx.cor().HEX().getText()))
 
         elif ctx.tamanho():
             tamanho = ctx.tamanho()
-            return 'tamanho', (int(tamanho.NUM_INT(0).getText()), int(tamanho.NUM_INT(1).getText()))
+            self.tabela_imagem.addSimbolo(Simbolo('tamanho', '', (int(tamanho.NUM_INT(0).getText()), int(tamanho.NUM_INT(1).getText()))))
 
-        elif ctx.nome():
-            if not self.tabela_simbolos.exist(ctx.nome().IDENT().getText()):
-                return 'nome', ctx.nome().IDENT().getText() + '.' + ctx.nome().tipo_arquivo().getText()
-            else:
-                print('O nome ' + str(ctx.IDENT()) + ' já existe.')
-                return None, None
+        elif ctx.nome_arquivo():
+            self.tabela_imagem.addSimbolo(Simbolo('nome', '', ctx.nome_arquivo().IDENT().getText() + '.' + ctx.nome_arquivo().tipo_arquivo().getText()))
 
         elif ctx.conteudo():
             self.visitConteudo(ctx.conteudo())
-            return None, None
 
-
-    def visitConteudo(self, ctx: wallpaperParser.ConteudoContext): #visitCorpo
+    def visitConteudo(self, ctx: wallpaperParser.ConteudoContext):
         i = 0
-        for forma in ctx.forma():
-            self.visitForma(forma)
+        for ctxForma in ctx.forma():
             self.visitAtributos(ctx.atributos(i))
+            self.tabela_forma.addSimbolo(Simbolo('formato', '', ctxForma.getText()))
             i += 1
 
-    def visitForma(self, ctx:wallpaperParser.FormaContext): #visitImagem
-        forma = ctx.getText()
-        self.tabela_simbolos.addSymbol(Symbol('Forma', None, None, None, forma, self.imagem.identificador, None))
+    # TODO: Verificar para cada forma que ela somente pode ter
+    # TODO: 1 cor, 1 tamanho, 1 chave etc...
+    def visitAtributos(self, ctx: wallpaperParser.AtributosContext):
+        if not ctx.chave().getText():
+            print('Erro: O atributo chave é obrigatório para formas')
+            return
 
-    def visitAtributos(self, ctx: wallpaperParser.AtributosContext): #visitPropriedade
-        if ctx.chave():
-            return 'chave', ctx.chave().getText()
+        # Verifica se já foi declarado o identificador da forma (chave)
+        if self.formas.exist(ctx.chave().IDENT()) or self.imagens.exist(ctx.chave().IDENT()):
+            print('O identificador ' + ctx.chave().IDENT().getText() + ' já foi declarado.')
+            return
+        else:
+            # adiciona uma entrada do tipo forma na tabela de simbolos da imagem
+            self.tabela_imagem.addSimbolo(Simbolo('forma', ctx.chave().IDENT().getText(), ''))
+            # atribui a tabela de forma para a tabela auxiliar
+            self.tabela_forma = TabelaSimbolo(ctx.chave().IDENT().getText())
+            self.formas.addTabela(self.tabela_forma)
 
-        elif ctx.cor():
-            return 'cor', ctx.cor().HEX().getText()
+        if not ctx.cor().HEX():
+            print('Erro: O atributo cor é obrigatório para formas')
+            return
 
-        elif ctx.tamanho():
-            tamanho = ctx.tamanho()
-            return 'tamanho', (int(tamanho.NUM_INT(0).getText()), int(tamanho.NUM_INT(1).getText()))
+        self.tabela_forma.addSimbolo(Simbolo('cor', '', ctx.cor().HEX().getText()))
+
+        if not ctx.tamanho().NUM_INT():
+            print('Erro: O atributo tamanho é obrigatório para formas')
+            return
+
+        tamanho = ctx.tamanho()
+        self.tabela_forma.addSimbolo(Simbolo('tamanho', '', (int(tamanho.NUM_INT(0).getText()), int(tamanho.NUM_INT(1).getText()))))
 

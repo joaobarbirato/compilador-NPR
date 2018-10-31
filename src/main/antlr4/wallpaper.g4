@@ -30,7 +30,7 @@ imagem:'Img' IDENT ';';
 
 corpo: IDENT '.' propriedade;
 
-propriedade: cor | tamanho | nome | conteudo;
+propriedade: cor | tamanho | nome_arquivo | conteudo;
 
 conteudo: 'conteudo' '=' '{' ( forma '=' '[' atributos ']' )+'}' | ;
 
@@ -44,6 +44,6 @@ cor: 'cor' '=' HEX;
 
 tamanho: 'tamanho' '=' '(' NUM_INT ',' NUM_INT ')';
 
-nome: 'nome' '=' '"' IDENT '.' tipo_arquivo '"';
+nome_arquivo: 'nome' '=' '"' IDENT '.' tipo_arquivo '"';
 
 tipo_arquivo: 'jpg' | 'png';
