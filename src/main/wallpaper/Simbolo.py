@@ -1,7 +1,6 @@
 class Simbolo:
-    def __init__(self, tipo, nome, valor):
+    def __init__(self, tipo, valor):
         self.tipo = tipo
-        self.nome = nome
         self.valor = valor
 
 
@@ -10,12 +9,17 @@ class TabelaSimbolo:
         self.nome_tabela = nome_tabela
         self.simbolos = []
 
+    def getSimbolo(self, tipoSimbolo):
+        for simbolo in self.simbolos:
+            if simbolo.tipo == tipoSimbolo:
+                return simbolo
+
     def addSimbolo(self, simbolo):
         self.simbolos.append(simbolo)
 
     def exist(self, novo_simbolo):
         for simbolo in self.simbolos:
-            if simbolo.name == novo_simbolo.nome:
+            if simbolo.valor == novo_simbolo.valor:
                 return True
         return False
 
