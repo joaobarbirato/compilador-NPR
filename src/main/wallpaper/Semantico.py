@@ -70,7 +70,7 @@ class Semantico(wallpaperVisitor):
             i += 1
 
     # TODO: Verificar para cada forma que ela somente pode ter
-    # TODO: 1 cor, 1 tamanho, 1 chave etc...
+    # TODO: 1 cor, 1 posicao, 1 chave etc...
     def visitAtributos(self, ctx: wallpaperParser.AtributosContext):
 
         if not ctx.chave().getText():
@@ -94,10 +94,11 @@ class Semantico(wallpaperVisitor):
 
         self.tabela_forma.addSimbolo(Simbolo('cor', ctx.cor().HEX().getText()))
 
-        if not ctx.tamanho().NUM_INT():
-            print('Erro: O atributo tamanho é obrigatório para formas')
+        if not ctx.posicao().NUM_INT():
+            print('Erro: O atributo posição é obrigatório para formas')
             return
 
-        tamanho = ctx.tamanho()
-        self.tabela_forma.addSimbolo(Simbolo('tamanho', (int(tamanho.NUM_INT(0).getText()), int(tamanho.NUM_INT(1).getText()))))
+        posicao = ctx.posicao()
+        self.tabela_forma.addSimbolo(Simbolo('posicao', (int(posicao.NUM_INT(0).getText()), int(posicao.NUM_INT(1).getText()),
+                                                         int(posicao.NUM_INT(2).getText()), int(posicao.NUM_INT(3).getText()) )))
 

@@ -6,13 +6,13 @@ img.conteudo = {
     retangulo = [
 		chave = id1
 		cor = 0x800080
-		tamanho = (15,30)
+		posicao = (40, 40, 85, 85)
     ]
 
     circulo = [
 		chave = id2
 		cor = 0x800000
-		tamanho = (100,200)
+		posicao = (90, 80, 500, 400)
     ]
 }
 

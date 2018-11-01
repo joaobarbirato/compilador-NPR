@@ -36,13 +36,15 @@ conteudo: 'conteudo' '=' '{' ( forma '=' '[' atributos ']' )+'}' | ;
 
 forma: 'retangulo' | 'triangulo' | 'circulo' | 'texto';
 
-atributos: chave cor tamanho;
+atributos: chave cor posicao;
 
 chave: 'chave' '=' IDENT;
 
 cor: 'cor' '=' HEX;
 
 tamanho: 'tamanho' '=' '(' NUM_INT ',' NUM_INT ')';
+
+posicao: 'posicao' '=' '(' NUM_INT ',' NUM_INT ',' NUM_INT ',' NUM_INT ')';
 
 nome_arquivo: 'nome' '=' '"' IDENT '.' tipo_arquivo '"';
 

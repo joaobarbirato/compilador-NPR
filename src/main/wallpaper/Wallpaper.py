@@ -9,14 +9,16 @@ class Forma:
     def __init__(self):
         self.chave = None
         self.cor = None
-        self.tamanho = None
+        self.posicao = None
         self.formato = None
 
     def draw(self, draw):
         if self.formato == 'retangulo':
-            draw.rectangle((40, 40, 85, 85), fill=rgb(self.cor[2:]))
+            draw.rectangle(self.posicao, fill=rgb(self.cor[2:]))
         elif self.formato == 'circulo':
-            draw.ellipse((90, 80, 500, 400), fill=rgb(self.cor[2:]))
+            draw.ellipse(self.posicao, fill=rgb(self.cor[2:]))
+        elif self.formato == 'triangulo':
+            draw.polygon(self.posicao, fill=(self.cor[2:]))
 
 
 class Imagem:
@@ -58,8 +60,8 @@ class Wallpaper:
                                 forma.chave = s.valor
                             elif s.tipo == 'cor':
                                 forma.cor = s.valor
-                            elif s.tipo == 'tamanho':
-                                forma.tamanho = s.valor
+                            elif s.tipo == 'posicao':
+                                forma.posicao = s.valor
                             elif s.tipo == 'formato':
                                 forma.formato = s.valor
                         imagem.formas.append(forma)
