@@ -1,17 +1,18 @@
 
-/* Gramática de RPN (Reverse Polish Notation - RPN)
-** Autores                          RA
+/* Gramática Wallpaper
+** Autores                              RA
 ** - Cassiano Maia                      726507
 ** - João Gabriel Melo Barbirato        726546
 ** - Julia Milain                       726552
+** - Rebeca Lima Rocha                  486060
 */
 
 grammar wallpaper;
 
-fragment LETRA: [a-zA-Z];
-fragment ALGARISMO: [0-9];
+fragment LETRA: 'a'..'z'|'A'..'Z';
+fragment ALGARISMO: '0'..'9';
 
-HEX : '0x' (ALGARISMO)+;
+HEX : '0x' (LETRA|ALGARISMO)*;
 
 NUM_INT : (ALGARISMO)+;
 NUM_REAL : (ALGARISMO)+ '.' (ALGARISMO)+;
@@ -21,25 +22,30 @@ ENDL : ([\n] | [\t] | [\r]) -> skip ;
 
 IDENT : (LETRA | '_') ('_'| ALGARISMO | LETRA)* ;
 
-programa : declaracoes corpo ;
+programa: declaracao corpo*;
 
-declaracoes : 'Img' IDENT (IDENT)* ';' ;
+declaracao: imagem+;
 
-corpo: (cmd)* ;
+imagem:'Img' IDENT ';';
 
-cmd: elementos |
-    conteudo |
-    forma |
-    atributos |
-    salvarImagem
-    ;
+corpo: IDENT '.' propriedade;
 
-elementos : elementos '=' '{' (conteudo)* '}' ';' ;
+propriedade: cor | tamanho | nome_arquivo | conteudo;
 
-conteudo : forma '=' '[' atributos ']' ';' ;
+conteudo: 'conteudo' '=' '{' ( forma '=' '[' atributos ']' )+'}' | ;
 
-forma : retangulo | triangulo | circulo | texto ;
+forma: 'retangulo' | 'triangulo' | 'circulo' | 'texto';
 
-atributos : 'id' '=' IDENT (IDENT)* | 'cor' '=' HEX | 'tamanho' '=' '(' NUM_INT ',' NUM_INT ')';
-    
-salvarImagem : 'retornar' identificador;
+atributos: chave cor posicao;
+
+chave: 'chave' '=' IDENT;
+
+cor: 'cor' '=' HEX;
+
+tamanho: 'tamanho' '=' '(' NUM_INT ',' NUM_INT ')';
+
+posicao: 'posicao' '=' '(' NUM_INT ',' NUM_INT ',' NUM_INT ',' NUM_INT ')';
+
+nome_arquivo: 'nome' '=' '"' IDENT '.' tipo_arquivo '"';
+
+tipo_arquivo: 'jpg' | 'png';
