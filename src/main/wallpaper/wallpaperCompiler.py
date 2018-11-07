@@ -31,11 +31,11 @@ def main(argv):
         print(tabela.nome_tabela)
         for simbolo in tabela.simbolos:
             print(simbolo.tipo, simbolo.valor)
-    #
-    # imagens = analisador_semantico.imagens
-    # formas = analisador_semantico.formas
-    # w = Wallpaper(imagens, formas)
-    # w.run()
+
+    #imagens = analisador_semantico.imagens
+    #formas = analisador_semantico.formas
+    #w = Wallpaper(imagens, formas)
+    #w.run()
 
 if __name__ == '__main__':
     main(sys.argv)

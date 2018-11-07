@@ -39,3 +39,7 @@ env/
 
 # pycache
 src/main/wallpaper/__pycache__
+
+#wallpaper compiler
+*.png
+*.jpeg
