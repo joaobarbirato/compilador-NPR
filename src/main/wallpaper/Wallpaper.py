@@ -51,17 +51,17 @@ class Wallpaper:
                     imagem.tamanho = simbolo.valor
                 elif simbolo.tipo == 'nome':
                     imagem.nome_arquivo = simbolo.valor
-                elif simbolo.tipo == 'forma':
+                elif simbolo.tipo == 'chave':       # nao existe mais o forma na imagem
                     for tabela_forma in self.formas.tabelas:
-                        forma = Forma()
-                        for s in tabela_forma.simbolos:
-                            if s.tipo == 'chave':
-                                forma.chave = s.valor
-                            elif s.tipo == 'cor':
-                                forma.cor = s.valor
-                            elif s.tipo == 'posicao':
-                                forma.posicao = s.valor
-                            elif s.tipo == 'formato':
-                                forma.formato = s.valor
-                        imagem.formas.append(forma)
+                        if simbolo.valor == tabela_forma.nome_tabela: #formas que PERTENCEM à imagem
+                            forma = Forma()
+                            forma.chave = tabela_forma.nome_tabela      #setando a chave direto
+                            for s in tabela_forma.simbolos:
+                                if s.tipo == 'cor':
+                                    forma.cor = str(s.valor)
+                                elif s.tipo == 'posicao':
+                                    forma.posicao = s.valor
+                                elif s.tipo == 'formato':
+                                    forma.formato = s.valor
+                            imagem.formas.append(forma)
             imagem.desenharImagem()

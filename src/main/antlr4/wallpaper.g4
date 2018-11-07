@@ -13,6 +13,7 @@ fragment
 LETRA
     : 'a'..'z'|'A'..'Z'
     ;
+
 fragment
 ALGARISMO
     : '0'..'9'
@@ -25,11 +26,13 @@ HEX
 NUM_INT
     : (ALGARISMO)+
     ;
+
 NUM_REAL
     : (ALGARISMO)+ '.' (ALGARISMO)+
     ;
 
 WS : (' ') -> skip ;
+
 ENDL
     : ([\n] | [\t] | [\r]) -> skip
     ;
@@ -62,11 +65,13 @@ conteudo
     : 'conteudo' '=' '{' (valores|referencia)+ '}'
     ;
 
-
-valores : forma '=' '[' atributos ']';
+valores
+    : forma '=' '[' atributos ']'
+    ;
 
 referencia
- : 'ref' '->' IDENT '.' IDENT '[' 'chave' '=' IDENT cor? posicao? ']';
+    : 'ref' '->' IDENT '.' IDENT '[' 'chave' '=' IDENT cor? posicao? ']'
+    ;
 
 forma
     : 'retangulo' | 'triangulo' | 'circulo' | 'texto'
