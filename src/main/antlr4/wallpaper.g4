@@ -66,7 +66,7 @@ conteudo
 valores : forma '=' '[' atributos ']';
 
 referencia
- : 'ref' '->' IDENT '.' IDENT '[' 'chave' '=' IDENT cor? posicao? ']';
+ : 'copia' '->' IDENT '.' IDENT '[' 'chave' '=' IDENT cor? posicao? ']';
 
 forma
     : 'retangulo' | 'triangulo' | 'circulo' | 'texto'
