@@ -9,43 +9,93 @@
 
 grammar wallpaper;
 
-fragment LETRA: 'a'..'z'|'A'..'Z';
-fragment ALGARISMO: '0'..'9';
+fragment
+LETRA
+    : 'a'..'z'|'A'..'Z'
+    ;
+fragment
+ALGARISMO
+    : '0'..'9'
+    ;
 
-HEX : '0x' (LETRA|ALGARISMO)*;
+HEX
+    : '0x' (LETRA|ALGARISMO)*
+    ;
 
-NUM_INT : (ALGARISMO)+;
-NUM_REAL : (ALGARISMO)+ '.' (ALGARISMO)+;
+NUM_INT
+    : (ALGARISMO)+
+    ;
+NUM_REAL
+    : (ALGARISMO)+ '.' (ALGARISMO)+
+    ;
 
 WS : (' ') -> skip ;
-ENDL : ([\n] | [\t] | [\r]) -> skip ;
+ENDL
+    : ([\n] | [\t] | [\r]) -> skip
+    ;
 
-IDENT : (LETRA | '_') ('_'| ALGARISMO | LETRA)* ;
+IDENT
+    : (LETRA | '_') ('_'| ALGARISMO | LETRA)*
+    ;
 
-programa: declaracao corpo*;
+programa
+    : declaracao corpo*
+    ;
 
-declaracao: imagem+;
+declaracao
+    : imagem+
+    ;
 
-imagem:'Img' IDENT ';';
+imagem
+    : 'Img' IDENT ';'
+    ;
 
-corpo: IDENT '.' propriedade;
+corpo
+    : IDENT '.' propriedade
+    ;
 
-propriedade: cor | tamanho | nome_arquivo | conteudo;
+propriedade
+    : cor | tamanho | nome_arquivo | conteudo
+    ;
 
-conteudo: 'conteudo' '=' '{' ( forma '=' '[' atributos ']' )+'}' | ;
+conteudo
+    : 'conteudo' '=' '{' (valores|referencia)+ '}'
+    ;
 
-forma: 'retangulo' | 'triangulo' | 'circulo' | 'texto';
 
-atributos: chave cor posicao;
+valores : forma '=' '[' atributos ']';
 
-chave: 'chave' '=' IDENT;
+referencia
+ : 'ref' '->' IDENT '.' IDENT '[' 'chave' '=' IDENT cor? posicao? ']';
 
-cor: 'cor' '=' HEX;
+forma
+    : 'retangulo' | 'triangulo' | 'circulo' | 'texto'
+    ;
 
-tamanho: 'tamanho' '=' '(' NUM_INT ',' NUM_INT ')';
+atributos
+    : chave cor posicao
+    ;
 
-posicao: 'posicao' '=' '(' NUM_INT ',' NUM_INT ',' NUM_INT ',' NUM_INT ')';
+chave
+    : 'chave' '=' IDENT
+    ;
 
-nome_arquivo: 'nome' '=' '"' IDENT '.' tipo_arquivo '"';
+cor
+    : 'cor' '=' HEX
+    ;
 
-tipo_arquivo: 'jpg' | 'png';
+tamanho
+    : 'tamanho' '=' '(' NUM_INT ',' NUM_INT ')'
+    ;
+
+posicao
+    : 'posicao' '=' '(' NUM_INT ',' NUM_INT ',' NUM_INT ',' NUM_INT ')'
+    ;
+
+nome_arquivo
+    : 'nome' '=' '"' IDENT '.' tipo_arquivo '"'
+    ;
+
+tipo_arquivo
+    : 'jpg' | 'png'
+    ;

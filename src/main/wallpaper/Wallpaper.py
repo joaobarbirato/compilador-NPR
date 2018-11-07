@@ -12,7 +12,7 @@ class Forma:
         self.posicao = None
         self.formato = None
 
-    def draw(self, draw):
+    def desenharForma(self, draw):
         if self.formato == 'retangulo':
             draw.rectangle(self.posicao, fill=rgb(self.cor[2:]))
         elif self.formato == 'circulo':
@@ -28,12 +28,11 @@ class Imagem:
         self.nome_arquivo = None
         self.formas = []
 
-    def draw(self):
+    def desenharImagem(self):
         pillowImagem = Image.new('RGB', self.tamanho, rgb(self.cor[2:]))
         draw = ImageDraw.Draw(pillowImagem)
         for forma in self.formas:
-            forma.draw(draw)
-
+            forma.desenharForma(draw)
         pillowImagem.save(self.nome_arquivo, 'PNG')
 
 
@@ -65,4 +64,4 @@ class Wallpaper:
                             elif s.tipo == 'formato':
                                 forma.formato = s.valor
                         imagem.formas.append(forma)
-            imagem.draw()
+            imagem.desenharImagem()
