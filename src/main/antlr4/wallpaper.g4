@@ -1,45 +1,101 @@
 
-/* Gramática de RPN (Reverse Polish Notation - RPN)
-** Autores                          RA
+/* Gramática Wallpaper
+** Autores                              RA
 ** - Cassiano Maia                      726507
 ** - João Gabriel Melo Barbirato        726546
 ** - Julia Milain                       726552
+** - Rebeca Lima Rocha                  486060
 */
 
 grammar wallpaper;
 
-fragment LETRA: [a-zA-Z];
-fragment ALGARISMO: [0-9];
-
-HEX : '0x' (ALGARISMO)+;
-
-NUM_INT : (ALGARISMO)+;
-NUM_REAL : (ALGARISMO)+ '.' (ALGARISMO)+;
-
-WS : (' ') -> skip ;
-ENDL : ([\n] | [\t] | [\r]) -> skip ;
-
-IDENT : (LETRA | '_') ('_'| ALGARISMO | LETRA)* ;
-
-programa : declaracoes corpo ;
-
-declaracoes : 'Img' IDENT (IDENT)* ';' ;
-
-corpo: (cmd)* ;
-
-cmd: elementos |
-    conteudo |
-    forma |
-    atributos |
-    salvarImagem
+fragment
+LETRA
+    : 'a'..'z'|'A'..'Z'
+    ;
+fragment
+ALGARISMO
+    : '0'..'9'
     ;
 
-elementos : elementos '=' '{' (conteudo)* '}' ';' ;
+HEX
+    : '0x' (LETRA|ALGARISMO)*
+    ;
 
-conteudo : forma '=' '[' atributos ']' ';' ;
+NUM_INT
+    : (ALGARISMO)+
+    ;
+NUM_REAL
+    : (ALGARISMO)+ '.' (ALGARISMO)+
+    ;
 
-forma : retangulo | triangulo | circulo | texto ;
+WS : (' ') -> skip ;
+ENDL
+    : ([\n] | [\t] | [\r]) -> skip
+    ;
 
-atributos : 'id' '=' IDENT (IDENT)* | 'cor' '=' HEX | 'tamanho' '=' '(' NUM_INT ',' NUM_INT ')';
-    
-salvarImagem : 'retornar' identificador;
+IDENT
+    : (LETRA | '_') ('_'| ALGARISMO | LETRA)*
+    ;
+
+programa
+    : declaracao corpo*
+    ;
+
+declaracao
+    : imagem+
+    ;
+
+imagem
+    : 'Img' IDENT ';'
+    ;
+
+corpo
+    : IDENT '.' propriedade
+    ;
+
+propriedade
+    : cor | tamanho | nome_arquivo | conteudo
+    ;
+
+conteudo
+    : 'conteudo' '=' '{' (valores|referencia)+ '}'
+    ;
+
+
+valores : forma '=' '[' atributos ']';
+
+referencia
+ : 'ref' '->' IDENT '.' IDENT '[' 'chave' '=' IDENT cor? posicao? ']';
+
+forma
+    : 'retangulo' | 'triangulo' | 'circulo' | 'texto'
+    ;
+
+atributos
+    : chave cor posicao
+    ;
+
+chave
+    : 'chave' '=' IDENT
+    ;
+
+cor
+    : 'cor' '=' HEX
+    ;
+
+tamanho
+    : 'tamanho' '=' '(' NUM_INT ',' NUM_INT ')'
+    ;
+
+posicao
+    : 'posicao' '=' '(' NUM_INT ',' NUM_INT ',' NUM_INT ',' NUM_INT ')'
+    ;
+
+nome_arquivo
+    : 'nome' '=' '"' IDENT '.' tipo_arquivo '"'
+    ;
+
+tipo_arquivo
+    : 'jpg' | 'png'
+    ;
