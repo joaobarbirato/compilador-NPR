@@ -7,6 +7,7 @@ class Semantico(wallpaperVisitor):
     def __init__(self):
         self.imagens = ListaTabela()
         self.formas = ListaTabela()
+        self.texto = ListaTabela()
         # tabela auxiliar para guardar a tabela atual de imagem
         # permite passar uma tabela pelas funções
         self.tabela_imagem = None
@@ -99,10 +100,10 @@ class Semantico(wallpaperVisitor):
         self.tabela_forma = None
 
     def visitValores(self, ctx: wallpaperParser.ValoresContext):
-        self.visitAtributos(ctx.atributos())
+        self.visitAtributos_forma(ctx.atributos_forma())
         self.tabela_forma.addSimbolo(Simbolo('formato', ctx.forma().getText()))
 
-    def visitAtributos(self, ctx: wallpaperParser.AtributosContext):
+    def visitAtributos_forma(self, ctx:wallpaperParser.Atributos_formaContext):
 
         if not ctx.chave().getText():
             print('Erro: O atributo chave é obrigatório para formas')
