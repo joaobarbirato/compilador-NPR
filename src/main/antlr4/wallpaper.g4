@@ -63,7 +63,10 @@ conteudo
     ;
 
 
-valores : forma '=' '[' atributos ']';
+valores
+    : forma '=' '[' atributos_forma ']'
+    | texto '=' '[' atributos_texto ']'
+    ;
 
 referencia
  : 'ref' '->' IDENT '.' IDENT '[' 'chave' '=' IDENT cor? posicao? ']';
@@ -72,7 +75,7 @@ forma
     : 'retangulo' | 'triangulo' | 'circulo' | 'texto'
     ;
 
-atributos
+atributos_forma
     : chave cor posicao
     ;
 
@@ -90,6 +93,27 @@ tamanho
 
 posicao
     : 'posicao' '=' '(' NUM_INT ',' NUM_INT ',' NUM_INT ',' NUM_INT ')'
+    ;
+
+//Regras referentes a texto na img
+texto
+    : IDENT'.texto'
+    ;
+
+atributos_texto
+    : posicao_inicial corpo_texto alinhamento
+    ;
+
+posicao_inicial
+    : 'posicao' '=' '(' NUM_INT ',' NUM_INT ')'
+    ;
+
+corpo_texto
+    : 'corpo' '=' '"' IDENT '"'
+    ;
+
+alinhamento
+    : 'direita' | 'centro' | 'direita'
     ;
 
 nome_arquivo
