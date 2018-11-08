@@ -97,11 +97,11 @@ posicao
 
 //Regras referentes a texto na img
 texto
-    : IDENT'.texto'
+    : 'texto'
     ;
 
 atributos_texto
-    : posicao_inicial corpo_texto alinhamento
+    : chave posicao_inicial corpo_texto alinhamento
     ;
 
 posicao_inicial
@@ -109,7 +109,7 @@ posicao_inicial
     ;
 
 corpo_texto
-    : 'corpo' '=' '"' IDENT '"'
+    : 'corpo_texto' '=' '"' IDENT '"'
     ;
 
 alinhamento
