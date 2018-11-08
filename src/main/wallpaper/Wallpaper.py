@@ -1,4 +1,4 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
 
 
 def rgb(hex):
@@ -27,12 +27,17 @@ class Imagem:
         self.tamanho = None
         self.nome_arquivo = None
         self.formas = []
+        self.filtros = []
 
     def desenharImagem(self):
         pillowImagem = Image.new('RGB', self.tamanho, rgb(self.cor[2:]))
         draw = ImageDraw.Draw(pillowImagem)
         for forma in self.formas:
             forma.desenharForma(draw)
+
+        for filtro in self.filtros:
+            pillowImagem.filter(filtro)
+
         pillowImagem.save(self.nome_arquivo, 'PNG')
 
 
@@ -64,4 +69,13 @@ class Wallpaper:
                             elif s.tipo == 'formato':
                                 forma.formato = s.valor
                         imagem.formas.append(forma)
+
+                elif simbolo.tipo == 'filtro':
+                    if simbolo.valor == "desfoque":
+                        imagem.filtros.append(ImageFilter.BLUR)
+                    elif simbolo.valor == "contorno":
+                        imagem.filtros.append(ImageFilter.CONTOUR)
+                    elif simbolo.valor == "suavização":
+                        imagem.filtros.append(ImageFilter.SMOOTH)
+
             imagem.desenharImagem()

@@ -14,6 +14,7 @@ class Semantico(wallpaperVisitor):
         # permite passar uma tabela pelas funções
         self.tabela_forma = None
         self.conteudoImagem = []
+        self.filtros = []
 
     def visitPrograma(self, ctx: wallpaperParser.ProgramaContext):
         wallpaperVisitor.visitPrograma(self, ctx)
@@ -56,7 +57,6 @@ class Semantico(wallpaperVisitor):
                 print('Erro: Imagem já possui um nome de arquivo.')
                 return
 
-
         elif ctx.conteudo():
             for conteudo in self.conteudoImagem:
                 if conteudo == self.tabela_imagem.nome_tabela:
@@ -65,6 +65,21 @@ class Semantico(wallpaperVisitor):
 
             self.conteudoImagem.append(self.tabela_imagem.nome_tabela)
             self.visitConteudo(ctx.conteudo())
+
+        elif ctx.filtro():
+            for filtro in self.filtros:
+                if not self.tabela_imagem.getSimbolo('cor'):
+                    # TODO: implementação para adicionar na tabela
+                    pass
+            pass
+
+    def visitFiltro(self, ctx:wallpaperParser.FiltroContext):
+        for ctx_f_o in ctx.filtro_opcoes():
+            self.visitFiltro_opcoes(ctx_f_o)
+
+    def visitFiltro_opcoes(self, ctx:wallpaperParser.Filtro_opcoesContext):
+        # TODO: IMPLEMENTAR COMO visitValores E visitReferencia
+        pass
 
     def visitConteudo(self, ctx: wallpaperParser.ConteudoContext):
         for referencia in ctx.referencia():
