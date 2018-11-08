@@ -101,15 +101,15 @@ texto
     ;
 
 atributos_texto
-    : chave posicao_inicial corpo_texto alinhamento
+    : chave posicao_inicial corpo_texto //alinhamento
     ;
 
 posicao_inicial
-    : 'posicao' '=' '(' NUM_INT ',' NUM_INT ')'
+    : 'posicao_inicial' '=' '(' NUM_INT ',' NUM_INT ')'
     ;
 
 corpo_texto
-    : 'corpo_texto' '=' '"' IDENT '"'
+    : 'corpo_texto' '=' IDENT
     ;
 
 alinhamento

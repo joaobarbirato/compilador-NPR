@@ -20,6 +20,12 @@ class Forma:
         elif self.formato == 'triangulo':
             draw.polygon(self.posicao, fill=(self.cor[2:]))
 
+class Texto:
+    def __init__(self):
+        self.chave = None
+        self.posicao_inicial = None
+        self.corpo_texto = None
+        self.alinhamento = None
 
 class Imagem:
     def __init__(self):

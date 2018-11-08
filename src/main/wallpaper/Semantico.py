@@ -143,16 +143,16 @@ class Semantico(wallpaperVisitor):
 
     def visitAtributos_texto(self, ctx: wallpaperParser.Atributos_textoContext):
 
-        if not ctx.corpo_texto():
+        if not ctx.chave().getText():
             print('Erro: O atributo corpo_ é obrigatório para textos')
             return  # exit()
 
-        if self.formas.exist(ctx.corpo_texto().IDENT()) or self.imagens.exist(ctx.corpo_texto().IDENT()) or self.texto.exist(ctx.corpo_texto().IDENT()):
-            print('Erro: O identificador ' + ctx.corpo_texto().IDENT().getText() + ' já foi declarado.')
+        if self.formas.exist(ctx.chave().IDENT()) or self.imagens.exist(ctx.chave().IDENT()) or self.texto.exist(ctx.chave().IDENT()):
+            print('Erro: O identificador ' + ctx.chave().IDENT().getText() + ' já foi declarado.')
             return
         else:
             # adiciona uma entrada do tipo chave na tabela de simbolos da imagem
-            self.tabela_texto.addSimbolo(Simbolo('chave', ctx.corpo_texto().IDENT().getText()))
+            self.tabela_texto.addSimbolo(Simbolo('chave', ctx.chave().IDENT().getText()))
 
             # atribui a tabela de texto para a tabela auxiliar
             self.tabela_texto = TabelaSimbolo(ctx.chave().IDENT().getText())
