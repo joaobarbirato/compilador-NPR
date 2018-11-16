@@ -13,6 +13,7 @@ fragment
 LETRA
     : 'a'..'z'|'A'..'Z'
     ;
+
 fragment
 ALGARISMO
     : '0'..'9'
@@ -25,11 +26,13 @@ HEX
 NUM_INT
     : (ALGARISMO)+
     ;
+
 NUM_REAL
     : (ALGARISMO)+ '.' (ALGARISMO)+
     ;
 
 WS : (' ') -> skip ;
+
 ENDL
     : ([\n] | [\t] | [\r]) -> skip
     ;
@@ -55,25 +58,20 @@ corpo
     ;
 
 propriedade
-    : cor | tamanho | nome_arquivo | conteudo | filtro
+    : cor | tamanho | nome_arquivo | conteudo
     ;
 
 conteudo
     : 'conteudo' '=' '{' (valores|referencia)+ '}'
     ;
 
-filtro
-    : 'filtro' '=' '(' filtro_opcoes (',' filtro_opcoes)* ')'
+valores
+    : forma '=' '[' atributos ']'
     ;
-
-filtro_opcoes
-    : 'desfoque' | 'contorno' | 'suavização'
-    ;
-
-valores : forma '=' '[' atributos ']';
 
 referencia
- : 'copia' '->' IDENT '.' IDENT '[' 'chave' '=' IDENT cor? posicao? ']';
+    : 'ref' '->' IDENT '.' IDENT '[' 'chave' '=' IDENT cor? posicao? ']'
+    ;
 
 forma
     : 'retangulo' | 'triangulo' | 'circulo' | 'texto'

@@ -51,8 +51,8 @@ class Semantico(wallpaperVisitor):
 
         elif ctx.nome_arquivo():
             if not self.tabela_imagem.getSimbolo('nome'):
-                self.tabela_imagem.addSimbolo(Simbolo('nome',
-                                                      ctx.nome_arquivo().IDENT().getText() + '.' + ctx.nome_arquivo().tipo_arquivo().getText()))
+                self.tabela_imagem.addSimbolo(Simbolo('nome',ctx.nome_arquivo().IDENT().getText()
+                                                      + '.' + ctx.nome_arquivo().tipo_arquivo().getText()))
             else:
                 print('Erro: Imagem já possui um nome de arquivo.')
                 return
@@ -95,8 +95,8 @@ class Semantico(wallpaperVisitor):
         # verificar terceiro IDENT que é o chave da nova forma
 
         copy_forma = self.formas.getTabela(ctx.IDENT(1))
-        self.tabela_forma = TabelaSimbolo(ctx.IDENT(2).getText())
-        self.tabela_forma.addSimbolo(Simbolo('formato', copy_forma.getSimbolo('formato').valor))
+        self.tabela_forma = TabelaSimbolo(ctx.IDENT(2).getText())                          #--------
+        self.tabela_imagem.addSimbolo(Simbolo('chave', ctx.IDENT(2).getText()))         #----------
 
         if ctx.cor():
             self.tabela_forma.addSimbolo(Simbolo('cor', ctx.cor().HEX()))
@@ -110,6 +110,8 @@ class Semantico(wallpaperVisitor):
                                     int(posicao.NUM_INT(2).getText()), int(posicao.NUM_INT(3).getText()))))
         else:
             self.tabela_forma.addSimbolo(Simbolo('posicao', copy_forma.getSimbolo('posicao').valor))
+
+        self.tabela_forma.addSimbolo(Simbolo('formato', copy_forma.getSimbolo('formato').valor))
 
         self.formas.addTabela(self.tabela_forma)
         self.tabela_forma = None
@@ -133,7 +135,7 @@ class Semantico(wallpaperVisitor):
             self.tabela_imagem.addSimbolo(Simbolo('chave', ctx.chave().IDENT().getText()))
 
             # atribui a tabela de forma para a tabela auxiliar
-            self.tabela_forma = TabelaSimbolo(ctx.chave().IDENT().getText())
+            self.tabela_forma = TabelaSimbolo(ctx.chave().IDENT().getText())       #=========
             self.formas.addTabela(self.tabela_forma)
 
         if not ctx.cor().HEX():
