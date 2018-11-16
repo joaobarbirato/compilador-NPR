@@ -1,4 +1,10 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
+
+_DICT_FILTROS = {
+    'contorno': ImageFilter.CONTOUR,
+    'suavizacao': ImageFilter.SMOOTH,
+    'desfoque': ImageFilter.BLUR
+}
 
 
 def rgb(hex):
@@ -27,12 +33,17 @@ class Imagem:
         self.tamanho = None
         self.nome_arquivo = None
         self.formas = []
+        self.filtros = []
 
     def desenharImagem(self):
         pillowImagem = Image.new('RGB', self.tamanho, rgb(self.cor[2:]))
         draw = ImageDraw.Draw(pillowImagem)
         for forma in self.formas:
             forma.desenharForma(draw)
+
+        for filtro in self.filtros:
+            pillowImagem.filter(_DICT_FILTROS[filtro])
+
         pillowImagem.save(self.nome_arquivo, 'PNG')
 
 
@@ -51,11 +62,11 @@ class Wallpaper:
                     imagem.tamanho = simbolo.valor
                 elif simbolo.tipo == 'nome':
                     imagem.nome_arquivo = simbolo.valor
-                elif simbolo.tipo == 'chave':       # nao existe mais o forma na imagem
+                elif simbolo.tipo == 'chave':  # nao existe mais o forma na imagem
                     for tabela_forma in self.formas.tabelas:
-                        if simbolo.valor == tabela_forma.nome_tabela: #formas que PERTENCEM à imagem
+                        if simbolo.valor == tabela_forma.nome_tabela:  # formas que PERTENCEM à imagem
                             forma = Forma()
-                            forma.chave = tabela_forma.nome_tabela      #setando a chave direto
+                            forma.chave = tabela_forma.nome_tabela  # setando a chave direto
                             for s in tabela_forma.simbolos:
                                 if s.tipo == 'cor':
                                     forma.cor = str(s.valor)
@@ -64,4 +75,7 @@ class Wallpaper:
                                 elif s.tipo == 'formato':
                                     forma.formato = s.valor
                             imagem.formas.append(forma)
+                elif simbolo.tipo == 'filtro':
+                    imagem.filtros.append(simbolo.valor)
+
             imagem.desenharImagem()

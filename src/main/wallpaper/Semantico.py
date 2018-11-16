@@ -66,21 +66,19 @@ class Semantico(wallpaperVisitor):
             self.conteudoImagem.append(self.tabela_imagem.nome_tabela)
             self.visitConteudo(ctx.conteudo())
 
-    #     elif ctx.filtro():
-    #         for filtro in self.filtros:
-    #             self.tabela_imagem.addSimbolo(Simbolo("filtro", filtro))
-    #
-    # def visitFiltro(self, ctx: wallpaperParser.FiltroContext):
-    #     if self.filtros is None:
-    #         for ctx_f_o in ctx.filtro_opcoes():
-    #             self.visitFiltro_opcoes(ctx_f_o)
-    #
-    # def visitFiltro_opcoes(self, ctx: wallpaperParser.Filtro_opcoesContext):
-    #     texto_filtro = ctx.getText()
-    #     if texto_filtro not in self.filtros:
-    #         self.filtros.append(texto_filtro)
-    #     else:
-    #         print('Imagem já possui esse filtro')
+        elif ctx.filtro():
+            self.visitFiltro(ctx.filtro())
+            for filtro in self.filtros:
+                self.tabela_imagem.addSimbolo(Simbolo("filtro", filtro))
+
+    def visitFiltro(self, ctx: wallpaperParser.FiltroContext):
+        for ctx_f_o in ctx.filtro_opcoes():
+            self.visitFiltro_opcoes(ctx_f_o)
+
+    def visitFiltro_opcoes(self, ctx: wallpaperParser.Filtro_opcoesContext):
+        texto_filtro = ctx.getText()
+        if texto_filtro not in self.filtros:
+            self.filtros.append(texto_filtro)
 
     def visitConteudo(self, ctx: wallpaperParser.ConteudoContext):
         for referencia in ctx.referencia():

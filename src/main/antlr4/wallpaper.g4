@@ -58,7 +58,15 @@ corpo
     ;
 
 propriedade
-    : cor | tamanho | nome_arquivo | conteudo
+    : cor | tamanho | nome_arquivo | conteudo | filtro
+    ;
+
+filtro
+    : 'filtro' '=' filtro_opcoes (',' filtro_opcoes)*
+    ;
+
+filtro_opcoes
+    : 'desfoque' | 'suavizacao' | 'contorno'
     ;
 
 conteudo
