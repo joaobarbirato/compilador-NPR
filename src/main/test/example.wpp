@@ -1,0 +1,30 @@
+Img img;
+Img img1;
+
+img.cor = 0xAA0000
+img1.cor = 0xFF0000
+img.tamanho = (500, 500)
+img1.tamanho = (800, 600)
+
+img1.conteudo = {
+    circulo = [
+		chave = id1
+		cor = 0x008800
+		posicao = (90, 80, 500, 400)
+    ]
+    retangulo = [
+        chave = id2
+        cor = 0x000000
+        posicao = (40, 40, 200, 200)
+    ]
+}
+
+img.conteudo = {
+    copia -> img1.id1 [
+        chave = id3
+        cor = 0x000000
+    ]
+}
+
+img.nome = "nomeimagem.png"
+img1.nome = "nomeimagem1.png"

@@ -7,7 +7,12 @@ imagem.conteudo = {
     importado = [
         chave = doge
         caminho = "doge.png"
-        posicao = (100, 100)
+        posicao = (500, 300)
+    ]
+    retangulo = [
+        chave = ret5
+        cor = 0xfff212
+        posicao = (20, 20, 300, 300)
     ]
     retangulo = [
         chave = ret1
@@ -16,9 +21,25 @@ imagem.conteudo = {
     ]
     retangulo = [
         chave = ret2
-        cor = 0xFF0000
-        posicao = (100, 50, 600, 300)
+        cor = 0x00FF00
+        posicao = (100, 100, 500, 500)
     ]
+    retangulo = [
+        chave = ret3
+        cor = 0x13c200
+        posicao = (150, 150, 700, 700)
+    ]
+    retangulo = [
+        chave = ret4
+        cor = 0x012130
+        posicao = (200, 200, 800, 800)
+    ]
+    retangulo = [
+        chave = ret6
+        cor = 0x012390
+        posicao = (300, 300, 900, 900)
+    ]
+    
 }
 
 imagem.nome = "src/main/test/out/wpp_doge.png"
