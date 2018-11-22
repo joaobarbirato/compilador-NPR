@@ -1,0 +1,24 @@
+Img imagem;
+
+imagem.cor = 0x26f0b8
+imagem.tamanho = (840, 680)
+
+imagem.conteudo = {
+    importado = [
+        chave = doge
+        caminho = "doge.png"
+        posicao = (100, 100)
+    ]
+    retangulo = [
+        chave = ret1
+        cor = 0xFF0000
+        posicao = (50, 50, 200, 200)
+    ]
+    retangulo = [
+        chave = ret2
+        cor = 0xFF0000
+        posicao = (100, 50, 600, 300)
+    ]
+}
+
+imagem.nome = "src/main/test/out/wpp_doge.png"

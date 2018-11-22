@@ -42,7 +42,7 @@ IDENT
     ;
 
 CAMINHO
-    : '"' (LETRA | '_' | '-' | '.' | ALGARISMO)+ '"'
+    : '"' (LETRA | '_' | '-' | '.' | '/' | ALGARISMO)+ '"'
     ;
 
 programa
@@ -79,7 +79,7 @@ conteudo
 
 valores
     : forma '=' '[' atributos ']'
-    | 'importado' '=' '[' caminho tamanho? posicao_importado? ']'
+    | 'importado' '=' '[' chave caminho tamanho? posicao_importado? ']'
     ;
 
 caminho
@@ -91,7 +91,7 @@ posicao_importado
     ;
 
 referencia
-    : 'ref' '->' IDENT '.' IDENT '[' 'chave' '=' IDENT cor? posicao? ']'
+    : 'copia' '->' IDENT '.' IDENT '[' 'chave' '=' IDENT cor? posicao? ']'
     ;
 
 forma
