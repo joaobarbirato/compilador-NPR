@@ -1,4 +1,12 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
+
+_DICT_FILTROS = {
+    'contorno': ImageFilter.CONTOUR,
+    'suavizacao': ImageFilter.SMOOTH,
+    'desfoque': ImageFilter.BLUR
+}
+
+CUR_DIR = 'src/main/test/'
 
 
 def rgb(hex):
@@ -32,12 +40,25 @@ class Imagem:
         self.tamanho = None
         self.nome_arquivo = None
         self.formas = []
+        self.png_importados = []
+        self.filtros = []
 
     def desenharImagem(self):
-        pillowImagem = Image.new('RGB', self.tamanho, rgb(self.cor[2:]))
+        pillowImagem = Image.new('RGBA', self.tamanho, rgb(self.cor[2:]))
         draw = ImageDraw.Draw(pillowImagem)
         for forma in self.formas:
             forma.desenharForma(draw)
+        
+        for (caminho, tamanho, posicao) in self.png_importados:
+            pngImagem = Image.open(CUR_DIR + caminho)
+            if tamanho is not None:
+                pngImagem = pngImagem.resize(tamanho)
+
+            pillowImagem.paste(pngImagem, box=posicao, mask=pngImagem)
+
+        for filtro in self.filtros:
+            pillowImagem.filter(_DICT_FILTROS[filtro])
+
         pillowImagem.save(self.nome_arquivo, 'PNG')
 
 
@@ -57,17 +78,24 @@ class Wallpaper:
                     imagem.tamanho = simbolo.valor
                 elif simbolo.tipo == 'nome':
                     imagem.nome_arquivo = simbolo.valor
-                elif simbolo.tipo == 'forma':
+                elif simbolo.tipo == 'chave':  # nao existe mais o forma na imagem
                     for tabela_forma in self.formas.tabelas:
-                        forma = Forma()
-                        for s in tabela_forma.simbolos:
-                            if s.tipo == 'chave':
-                                forma.chave = s.valor
-                            elif s.tipo == 'cor':
-                                forma.cor = s.valor
-                            elif s.tipo == 'posicao':
-                                forma.posicao = s.valor
-                            elif s.tipo == 'formato':
-                                forma.formato = s.valor
-                        imagem.formas.append(forma)
+                        if simbolo.valor == tabela_forma.nome_tabela:  # formas que PERTENCEM à imagem
+                            forma = Forma()
+                            forma.chave = tabela_forma.nome_tabela  # setando a chave direto
+                            for s in tabela_forma.simbolos:
+                                if s.tipo == 'cor':
+                                    forma.cor = str(s.valor)
+                                elif s.tipo == 'posicao':
+                                    forma.posicao = s.valor
+                                elif s.tipo == 'formato':
+                                    forma.formato = s.valor
+                            imagem.formas.append(forma)
+
+                elif simbolo.tipo == 'importado':
+                    imagem.png_importados.append(simbolo.valor)
+
+                elif simbolo.tipo == 'filtro':
+                    imagem.filtros.append(simbolo.valor)
+
             imagem.desenharImagem()

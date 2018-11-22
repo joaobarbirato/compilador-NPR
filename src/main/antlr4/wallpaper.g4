@@ -13,6 +13,7 @@ fragment
 LETRA
     : 'a'..'z'|'A'..'Z'
     ;
+
 fragment
 ALGARISMO
     : '0'..'9'
@@ -25,17 +26,23 @@ HEX
 NUM_INT
     : (ALGARISMO)+
     ;
+
 NUM_REAL
     : (ALGARISMO)+ '.' (ALGARISMO)+
     ;
 
 WS : (' ') -> skip ;
+
 ENDL
     : ([\n] | [\t] | [\r]) -> skip
     ;
 
 IDENT
     : (LETRA | '_') ('_'| ALGARISMO | LETRA)*
+    ;
+
+CAMINHO
+    : '"' (LETRA | '_' | '-' | '.' | ALGARISMO)+ '"'
     ;
 
 programa
@@ -55,21 +62,42 @@ corpo
     ;
 
 propriedade
-    : cor | tamanho | nome_arquivo | conteudo
+    : cor | tamanho | nome_arquivo | conteudo | filtro
+    ;
+
+filtro
+    : 'filtro' '=' filtro_opcoes (',' filtro_opcoes)*
+    ;
+
+filtro_opcoes
+    : 'desfoque' | 'suavizacao' | 'contorno'
     ;
 
 conteudo
     : 'conteudo' '=' '{' (valores|referencia)+ '}'
     ;
 
+valores
+    : forma '=' '[' atributos ']'
+    | 'importado' '=' '[' caminho tamanho? posicao_importado? ']'
+    ;
 
+caminho
+    :  'caminho' '=' CAMINHO
+    ;
+    
 valores
     : forma '=' '[' atributos_forma ']'
     | texto '=' '[' atributos_texto ']'
     ;
 
+posicao_importado
+    :   'posicao' '=' '(' NUM_INT ',' NUM_INT ')'
+    ;
+
 referencia
- : 'ref' '->' IDENT '.' IDENT '[' 'chave' '=' IDENT cor? posicao? ']';
+    : 'ref' '->' IDENT '.' IDENT '[' 'chave' '=' IDENT cor? posicao? ']'
+    ;
 
 forma
     : 'retangulo' | 'triangulo' | 'circulo' | 'texto'
@@ -116,7 +144,7 @@ alinhamento
     ;
 
 nome_arquivo
-    : 'nome' '=' '"' IDENT '.' tipo_arquivo '"'
+    : 'nome' '=' CAMINHO
     ;
 
 tipo_arquivo
