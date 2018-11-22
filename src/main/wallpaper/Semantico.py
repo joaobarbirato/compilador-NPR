@@ -14,6 +14,7 @@ class Semantico(wallpaperVisitor):
         # permite passar uma tabela pelas funções
         self.tabela_forma = None
         self.conteudoImagem = []
+        self.filtros = []
 
     def visitPrograma(self, ctx: wallpaperParser.ProgramaContext):
         wallpaperVisitor.visitPrograma(self, ctx)
@@ -50,12 +51,11 @@ class Semantico(wallpaperVisitor):
 
         elif ctx.nome_arquivo():
             if not self.tabela_imagem.getSimbolo('nome'):
-                self.tabela_imagem.addSimbolo(Simbolo('nome',
-                                                      ctx.nome_arquivo().IDENT().getText() + '.' + ctx.nome_arquivo().tipo_arquivo().getText()))
+                self.tabela_imagem.addSimbolo(Simbolo('nome',ctx.nome_arquivo().IDENT().getText()
+                                                      + '.' + ctx.nome_arquivo().tipo_arquivo().getText()))
             else:
                 print('Erro: Imagem já possui um nome de arquivo.')
                 return
-
 
         elif ctx.conteudo():
             for conteudo in self.conteudoImagem:
@@ -65,6 +65,20 @@ class Semantico(wallpaperVisitor):
 
             self.conteudoImagem.append(self.tabela_imagem.nome_tabela)
             self.visitConteudo(ctx.conteudo())
+
+        elif ctx.filtro():
+            self.visitFiltro(ctx.filtro())
+            for filtro in self.filtros:
+                self.tabela_imagem.addSimbolo(Simbolo("filtro", filtro))
+
+    def visitFiltro(self, ctx: wallpaperParser.FiltroContext):
+        for ctx_f_o in ctx.filtro_opcoes():
+            self.visitFiltro_opcoes(ctx_f_o)
+
+    def visitFiltro_opcoes(self, ctx: wallpaperParser.Filtro_opcoesContext):
+        texto_filtro = ctx.getText()
+        if texto_filtro not in self.filtros:
+            self.filtros.append(texto_filtro)
 
     def visitConteudo(self, ctx: wallpaperParser.ConteudoContext):
         for referencia in ctx.referencia():
@@ -79,8 +93,8 @@ class Semantico(wallpaperVisitor):
         # verificar terceiro IDENT que é o chave da nova forma
 
         copy_forma = self.formas.getTabela(ctx.IDENT(1))
-        self.tabela_forma = TabelaSimbolo(ctx.IDENT(2).getText())
-        self.tabela_forma.addSimbolo(Simbolo('formato', copy_forma.getSimbolo('formato').valor))
+        self.tabela_forma = TabelaSimbolo(ctx.IDENT(2).getText())                          #--------
+        self.tabela_imagem.addSimbolo(Simbolo('chave', ctx.IDENT(2).getText()))         #----------
 
         if ctx.cor():
             self.tabela_forma.addSimbolo(Simbolo('cor', ctx.cor().HEX()))
@@ -94,6 +108,8 @@ class Semantico(wallpaperVisitor):
                                     int(posicao.NUM_INT(2).getText()), int(posicao.NUM_INT(3).getText()))))
         else:
             self.tabela_forma.addSimbolo(Simbolo('posicao', copy_forma.getSimbolo('posicao').valor))
+
+        self.tabela_forma.addSimbolo(Simbolo('formato', copy_forma.getSimbolo('formato').valor))
 
         self.formas.addTabela(self.tabela_forma)
         self.tabela_forma = None
@@ -117,7 +133,7 @@ class Semantico(wallpaperVisitor):
             self.tabela_imagem.addSimbolo(Simbolo('chave', ctx.chave().IDENT().getText()))
 
             # atribui a tabela de forma para a tabela auxiliar
-            self.tabela_forma = TabelaSimbolo(ctx.chave().IDENT().getText())
+            self.tabela_forma = TabelaSimbolo(ctx.chave().IDENT().getText())       #=========
             self.formas.addTabela(self.tabela_forma)
 
         if not ctx.cor().HEX():
