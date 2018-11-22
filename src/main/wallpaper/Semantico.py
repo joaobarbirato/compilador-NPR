@@ -14,6 +14,7 @@ class Semantico(wallpaperVisitor):
         # permite passar uma tabela pelas funções
         self.tabela_forma = None
         self.conteudoImagem = []
+        self.caminhos_importado = None
 
     def visitPrograma(self, ctx: wallpaperParser.ProgramaContext):
         wallpaperVisitor.visitPrograma(self, ctx)
@@ -41,17 +42,19 @@ class Semantico(wallpaperVisitor):
 
         elif ctx.tamanho():
             tam = ctx.tamanho()
-            if not self.tabela_imagem.getSimbolo('tamanho'):
-                self.tabela_imagem.addSimbolo(
-                    Simbolo('tamanho', (int(tam.NUM_INT(0).getText()), int(tam.NUM_INT(1).getText()))))
+            if tam:
+                if not self.tabela_imagem.getSimbolo('tamanho'):
+                    self.tabela_imagem.addSimbolo(
+                        Simbolo('tamanho', (int(tam.NUM_INT(0).getText()), int(tam.NUM_INT(1).getText()))))
+                else:
+                    print('Erro: O tamanho já foi adicionado à imagem.')
+                    return
             else:
-                print('Erro: O tamanho já foi adicionado à imagem.')
-                return
+                print('Erro: tamanho nao definido')
 
         elif ctx.nome_arquivo():
             if not self.tabela_imagem.getSimbolo('nome'):
-                self.tabela_imagem.addSimbolo(Simbolo('nome',ctx.nome_arquivo().IDENT().getText()
-                                                      + '.' + ctx.nome_arquivo().tipo_arquivo().getText()))
+                self.tabela_imagem.addSimbolo(Simbolo('nome',ctx.nome_arquivo().CAMINHO().getText().replace('"','')))
             else:
                 print('Erro: Imagem já possui um nome de arquivo.')
                 return
@@ -101,8 +104,22 @@ class Semantico(wallpaperVisitor):
         self.tabela_forma = None
 
     def visitValores(self, ctx: wallpaperParser.ValoresContext):
-        self.visitAtributos(ctx.atributos())
-        self.tabela_forma.addSimbolo(Simbolo('formato', ctx.forma().getText()))
+        if ctx.forma():
+            self.visitAtributos(ctx.atributos())
+            self.tabela_forma.addSimbolo(Simbolo('formato', ctx.forma().getText()))
+        elif ctx.caminho():
+            self.visitCaminho(ctx.caminho())
+            __tamanho = (int(ctx.tamanho().NUM_INT(0).getText()), int(ctx.tamanho().NUM_INT(1).getText())) \
+                if ctx.tamanho() else None
+            __posicao = (int(ctx.posicao_importado().NUM_INT(0).getText()), int(ctx.posicao_importado().NUM_INT(1).getText())) \
+                if ctx.posicao_importado() else None
+
+            self.tabela_imagem.addSimbolo(Simbolo('importado', (self.caminhos_importado, __tamanho, __posicao)))
+
+    def visitCaminho(self, ctx:wallpaperParser.CaminhoContext):
+        caminhos = ctx.CAMINHO()
+        if caminhos:
+            self.caminhos_importado = caminhos.getText().replace('"','')
 
     def visitAtributos(self, ctx: wallpaperParser.AtributosContext):
 
