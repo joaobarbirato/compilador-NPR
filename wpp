@@ -30,5 +30,5 @@ else
         fi
     fi
 fi
-#echo $($PYTHON_DIR $COMPILER "$TARGET_DIR$1")
+
 $($PYTHON_DIR $COMPILER "$TARGET_DIR$1")
