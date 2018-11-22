@@ -23,6 +23,11 @@ class TabelaSimbolo:
                 return True
         return False
 
+    def print(self):
+        for simbolo in self.simbolos:
+            print(simbolo.tipo, simbolo.valor)
+        print()
+
 
 class ListaTabela:
     def __init__(self):

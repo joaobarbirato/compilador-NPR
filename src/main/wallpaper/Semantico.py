@@ -3,8 +3,24 @@ from wallpaperVisitor import wallpaperVisitor
 from Simbolo import Simbolo, TabelaSimbolo, ListaTabela
 
 
+class Erros:
+    def __init__(self):
+        self.texto = ""
+
+    def adiciona_erro(self, arg_str=None):
+        if str is not None:
+            self.texto += arg_str + '\n'
+
+    def existe_texto(self, arg_str=None):
+        return self.texto.find(arg_str) > -1
+
+    def print(self):
+        print(self.texto)
+
+
 class Semantico(wallpaperVisitor):
     def __init__(self):
+        self.erros = Erros()
         self.imagens = ListaTabela()
         self.formas = ListaTabela()
         # tabela auxiliar para guardar a tabela atual de imagem
@@ -16,54 +32,95 @@ class Semantico(wallpaperVisitor):
         self.conteudoImagem = []
         self.caminhos_importado = None
         self.filtros = []
+        self.existe_erros = False
 
     def visitPrograma(self, ctx: wallpaperParser.ProgramaContext):
-        wallpaperVisitor.visitPrograma(self, ctx)
+        if ctx.corpo():
+            wallpaperVisitor.visitPrograma(self, ctx)
+            for tabela in self.imagens.tabelas:
+                # lidando com erros dew falta de propriedades
+                if tabela.getSimbolo('cor') is None or tabela.getSimbolo('tamanho') is None:
+                    if tabela.getSimbolo('cor') is None:
+                        if not self.erros.existe_texto(
+                                "Erro: cor em " + tabela.nome_tabela + " não identificada."):
+                            self.erros.adiciona_erro(
+                                "Erro: cor em " + tabela.nome_tabela + " não identificada.")
+                    if tabela.getSimbolo('tamanho') is None:
+                        if not self.erros.existe_texto(
+                                "Erro: tamanho em " + tabela.nome_tabela + " não identificado."):
+                            self.erros.adiciona_erro(
+                                "Erro: tamanho em " + tabela.nome_tabela + " não identificado.")
+                    self.existe_erros = True
+                    return
+
+
+        else:
+            if not self.erros.existe_texto("Erro: propriedades não identificadas."):
+                self.erros.adiciona_erro("Erro: propriedades não identificadas.")
+
+        return self.existe_erros
 
     def visitImagem(self, ctx: wallpaperParser.ImagemContext):
         if self.imagens.exist(ctx.IDENT()):
-            print('Erro: O identificador ' + str(ctx.IDENT()) + ' já foi declarado.')
+            if not self.erros.existe_texto('Erro: O identificador ' + str(ctx.IDENT()) + ' já foi declarado.'):
+                self.erros.adiciona_erro('Erro: O identificador ' + str(ctx.IDENT()) + ' já foi declarado.')
         else:
             self.imagens.addTabela(TabelaSimbolo(ctx.IDENT().getText()))
 
     def visitCorpo(self, ctx: wallpaperParser.CorpoContext):
         if not self.imagens.exist(ctx.IDENT()):
-            print('Erro: O identificador ' + str(ctx.IDENT()) + ' não foi declarado.')
+            if not self.erros.existe_texto('Erro: O identificador ' + str(ctx.IDENT()) + ' não foi declarado.'):
+                self.erros.adiciona_erro('Erro: O identificador ' + str(ctx.IDENT()) + ' não foi declarado.')
         else:
             self.tabela_imagem = self.imagens.getTabela(ctx.IDENT())
-            self.visitPropriedade(ctx.propriedade())
+            if ctx.propriedade():
+                self.visitPropriedade(ctx.propriedade())
+
+            else:
+                if not self.erros.existe_texto("Erro: Nome não identificado."):
+                    self.erros.adiciona_erro("Erro: Nome não identificado.")
 
     def visitPropriedade(self, ctx: wallpaperParser.PropriedadeContext):
         if ctx.cor():
             if not self.tabela_imagem.getSimbolo('cor'):
                 self.tabela_imagem.addSimbolo(Simbolo('cor', ctx.cor().HEX().getText()))
             else:
-                print('Erro: A cor já foi adicionada à imagem.')
+                if not self.erros.existe_texto('Erro: A cor já foi adicionada à imagem.'):
+                    self.erros.adiciona_erro('Erro: A cor já foi adicionada à imagem.')
+                self.existe_erros = True
                 return
 
         elif ctx.tamanho():
             tam = ctx.tamanho()
+            # print(tam.getText())
             if tam:
                 if not self.tabela_imagem.getSimbolo('tamanho'):
+                    # print("opa")
                     self.tabela_imagem.addSimbolo(
                         Simbolo('tamanho', (int(tam.NUM_INT(0).getText()), int(tam.NUM_INT(1).getText()))))
                 else:
-                    print('Erro: O tamanho já foi adicionado à imagem.')
+                    if not self.erros.existe_texto('Erro: O tamanho já foi adicionado à imagem.'):
+                        self.erros.adiciona_erro('Erro: O tamanho já foi adicionado à imagem.')
+                    self.existe_erros = True
                     return
             else:
-                print('Erro: tamanho nao definido')
+                if not self.erros.existe_texto('Erro: tamanho em '+ self.tabela_imagem.nome_tabela+ ' nao definido'):
+                    self.erros.adiciona_erro('Erro: tamanho em '+ self.tabela_imagem.nome_tabela + ' nao definido')
 
         elif ctx.nome_arquivo():
             if not self.tabela_imagem.getSimbolo('nome'):
                 self.tabela_imagem.addSimbolo(Simbolo('nome',ctx.nome_arquivo().CAMINHO().getText().replace('"','')))
             else:
-                print('Erro: Imagem já possui um nome de arquivo.')
+                if not self.erros.existe_texto('Erro: Imagem já possui um nome de arquivo.'):
+                    self.erros.adiciona_erro('Erro: Imagem já possui um nome de arquivo.')
+                self.existe_erros = True
                 return
 
         elif ctx.conteudo():
             for conteudo in self.conteudoImagem:
                 if conteudo == self.tabela_imagem.nome_tabela:
-                    print('Imagem já possui um conteúdo.')
+                    print('Imagem ', self.tabela_imagem.nome_tabela,'  já possui um conteúdo.')
+                    self.existe_erros = True
                     return
 
             self.conteudoImagem.append(self.tabela_imagem.nome_tabela)
@@ -118,10 +175,11 @@ class Semantico(wallpaperVisitor):
         self.tabela_forma = None
 
     def visitValores(self, ctx: wallpaperParser.ValoresContext):
-        if ctx.forma():
+        if ctx.forma() is not None:
             self.visitAtributos(ctx.atributos())
-            self.tabela_forma.addSimbolo(Simbolo('formato', ctx.forma().getText()))
-        elif ctx.caminho():
+            if self.tabela_forma is not None:
+                self.tabela_forma.addSimbolo(Simbolo('formato', ctx.forma().getText()))
+        elif ctx.caminho() is not None:
             self.visitCaminho(ctx.caminho())
             __tamanho = (int(ctx.tamanho().NUM_INT(0).getText()), int(ctx.tamanho().NUM_INT(1).getText())) \
                 if ctx.tamanho() else None
@@ -138,12 +196,16 @@ class Semantico(wallpaperVisitor):
     def visitAtributos(self, ctx: wallpaperParser.AtributosContext):
 
         if not ctx.chave().getText():
-            print('Erro: O atributo chave é obrigatório para formas')
+            if not self.erros.existe_texto('Erro: O atributo chave  em '+ self.tabela_imagem.nome_tabela+' é obrigatório para formas'):
+                self.erros.adiciona_erro('Erro: O atributo chave  em '+ self.tabela_imagem.nome_tabela+ ' é obrigatório para formas')
+            self.existe_erros = True
             return  # exit()
 
         # Verifica se já foi declarado o identificador da forma (chave)
         if self.formas.exist(ctx.chave().IDENT()) or self.imagens.exist(ctx.chave().IDENT()):
-            print('Erro: O identificador ' + ctx.chave().IDENT().getText() + ' já foi declarado.')
+            if not self.erros.existe_texto('Erro: O identificador ' + ctx.chave().IDENT().getText() + ' já foi declarado.'):
+                self.erros.adiciona_erro('Erro: O identificador ' + ctx.chave().IDENT().getText() + ' já foi declarado.')
+            self.existe_erros = True
             return
         else:
             # adiciona uma entrada do tipo chave na tabela de simbolos da imagem
@@ -154,13 +216,17 @@ class Semantico(wallpaperVisitor):
             self.formas.addTabela(self.tabela_forma)
 
         if not ctx.cor().HEX():
-            print('Erro: O atributo cor é obrigatório para formas')
+            if not self.erros.existe_texto('Erro: O atributo cor em '+ self.tabela_forma.nome_tabela+' é obrigatório para formas'):
+                self.erros.adiciona_erro('Erro: O atributo cor em '+ self.tabela_forma.nome_tabela+' é obrigatório para formas')
+            self.existe_erros = True
             return
 
         self.tabela_forma.addSimbolo(Simbolo('cor', ctx.cor().HEX().getText()))
 
         if not ctx.posicao().NUM_INT():
-            print('Erro: O atributo posição é obrigatório para formas')
+            if not self.erros.existe_texto('Erro: O atributo posição em '+ self.tabela_forma.nome_tabela+' é obrigatório para formas'):
+                self.erros.adiciona_erro('Erro: O atributo posição em '+ self.tabela_forma.nome_tabela+' é obrigatório para formas')
+            self.existe_erros = True
             return
 
         posicao = ctx.posicao()
