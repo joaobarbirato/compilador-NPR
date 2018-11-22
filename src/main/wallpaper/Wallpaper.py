@@ -34,12 +34,18 @@ class Texto:
         self.posicao_inicial = None
         self.corpo_texto = None
 
+    def desenharTexto(self, draw):
+        print(self.posicao_inicial)
+        print(self.corpo_texto)
+        draw.text(self.posicao_inicial, self.corpo_texto)
+
 class Imagem:
     def __init__(self):
         self.cor = None
         self.tamanho = None
         self.nome_arquivo = None
         self.formas = []
+        self.textos = []
         self.png_importados = []
         self.filtros = []
 
@@ -48,7 +54,10 @@ class Imagem:
         draw = ImageDraw.Draw(pillowImagem)
         for forma in self.formas:
             forma.desenharForma(draw)
-        
+
+        for texto in self.textos:
+            texto.desenharTexto(draw)
+
         for (caminho, tamanho, posicao) in self.png_importados:
             pngImagem = Image.open(CUR_DIR + caminho)
             if tamanho is not None:
@@ -97,5 +106,8 @@ class Wallpaper:
 
                 elif simbolo.tipo == 'filtro':
                     imagem.filtros.append(simbolo.valor)
+
+                elif simbolo.tipo == 'texto':
+                    imagem.textos.append(simbolo.valor)
 
             imagem.desenharImagem()

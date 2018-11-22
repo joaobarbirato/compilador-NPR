@@ -123,7 +123,7 @@ class Semantico(wallpaperVisitor):
 
     def visitValores(self, ctx: wallpaperParser.ValoresContext):
         if ctx.forma():
-            self.visitAtributos(ctx.atributos())
+            self.visitAtributos_forma(ctx.atributos_forma())
             self.tabela_forma.addSimbolo(Simbolo('formato', ctx.forma().getText()))
         elif ctx.caminho():
             self.visitCaminho(ctx.caminho())
@@ -133,13 +133,15 @@ class Semantico(wallpaperVisitor):
                 if ctx.posicao_importado() else None
 
             self.tabela_imagem.addSimbolo(Simbolo('importado', (self.caminhos_importado, __tamanho, __posicao)))
+        elif ctx.atributos_texto():
+            self.visitAtributos_texto(ctx.atributos_texto())
 
     def visitCaminho(self, ctx:wallpaperParser.CaminhoContext):
         caminhos = ctx.CAMINHO()
         if caminhos:
             self.caminhos_importado = caminhos.getText().replace('"','')
 
-    def visitAtributos(self, ctx: wallpaperParser.AtributosContext):
+    def visitAtributos_forma(self, ctx:wallpaperParser.Atributos_formaContext):
 
         if not ctx.chave().getText():
             print('Erro: O atributo chave é obrigatório para formas')

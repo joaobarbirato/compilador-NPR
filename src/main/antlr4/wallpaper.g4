@@ -77,10 +77,6 @@ conteudo
     : 'conteudo' '=' '{' (valores|referencia)+ '}'
     ;
 
-valores
-    : forma '=' '[' atributos ']'
-    | 'importado' '=' '[' caminho tamanho? posicao_importado? ']'
-    ;
 
 caminho
     :  'caminho' '=' CAMINHO
@@ -88,6 +84,7 @@ caminho
     
 valores
     : forma '=' '[' atributos_forma ']'
+    | 'importado' '=' '[' caminho tamanho? posicao_importado? ']'
     | texto '=' '[' atributos_texto ']'
     ;
 
@@ -128,7 +125,7 @@ texto
     : 'texto' ;
 
 atributos_texto
-    : chave posicao_inicial corpo_texto //alinhamento
+    : chave posicao_inicial corpo_texto
     ;
 
 posicao_inicial
