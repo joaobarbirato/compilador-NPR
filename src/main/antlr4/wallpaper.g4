@@ -41,6 +41,10 @@ IDENT
     : (LETRA | '_') ('_'| ALGARISMO | LETRA)*
     ;
 
+CAMINHO
+    : '"' (LETRA | '_' | '-' | '.' | ALGARISMO)+ '"'
+    ;
+
 programa
     : declaracao corpo*
     ;
@@ -75,6 +79,15 @@ conteudo
 
 valores
     : forma '=' '[' atributos ']'
+    | 'importado' '=' '[' caminho tamanho? posicao_importado? ']'
+    ;
+
+caminho
+    :  'caminho' '=' CAMINHO
+    ;
+
+posicao_importado
+    :   'posicao' '=' '(' NUM_INT ',' NUM_INT ')'
     ;
 
 referencia
@@ -106,7 +119,7 @@ posicao
     ;
 
 nome_arquivo
-    : 'nome' '=' '"' IDENT '.' tipo_arquivo '"'
+    : 'nome' '=' CAMINHO
     ;
 
 tipo_arquivo
