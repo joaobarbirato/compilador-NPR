@@ -108,7 +108,6 @@ class Semantico(wallpaperVisitor):
             self.tabela_forma.addSimbolo(Simbolo('formato', ctx.forma().getText()))
         if ctx.atributos_texto() is not None:
             self.visitAtributos_texto(ctx.atributos_texto())
-            self.tabela_forma.addSimbolo(Simbolo('texto', ctx.texto().getText()))
 
     def visitAtributos_forma(self, ctx:wallpaperParser.Atributos_formaContext):
 
