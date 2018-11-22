@@ -25,7 +25,6 @@ class Texto:
         self.chave = None
         self.posicao_inicial = None
         self.corpo_texto = None
-        self.alinhamento = None
 
 class Imagem:
     def __init__(self):
@@ -43,9 +42,10 @@ class Imagem:
 
 
 class Wallpaper:
-    def __init__(self, imagens, formas):
+    def __init__(self, imagens, formas, textos):
         self.imagens = imagens
         self.formas = formas
+        self.textos = textos
 
     def run(self):
         for tabela_imagem in self.imagens.tabelas:
