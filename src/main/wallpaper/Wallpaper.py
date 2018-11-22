@@ -1,4 +1,10 @@
-from PIL import Image, ImageDraw
+from PIL import Image, ImageDraw, ImageFilter
+
+_DICT_FILTROS = {
+    'contorno': ImageFilter.CONTOUR,
+    'suavizacao': ImageFilter.SMOOTH,
+    'desfoque': ImageFilter.BLUR
+}
 
 CUR_DIR = 'src/main/test/'
 
@@ -30,19 +36,23 @@ class Imagem:
         self.nome_arquivo = None
         self.formas = []
         self.png_importados = []
+        self.filtros = []
 
     def desenharImagem(self):
         pillowImagem = Image.new('RGBA', self.tamanho, rgb(self.cor[2:]))
         draw = ImageDraw.Draw(pillowImagem)
         for forma in self.formas:
             forma.desenharForma(draw)
-
+        
         for (caminho, tamanho, posicao) in self.png_importados:
             pngImagem = Image.open(CUR_DIR + caminho)
             if tamanho is not None:
                 pngImagem = pngImagem.resize(tamanho)
 
             pillowImagem.paste(pngImagem, box=posicao, mask=pngImagem)
+
+        for filtro in self.filtros:
+            pillowImagem.filter(_DICT_FILTROS[filtro])
 
         pillowImagem.save(self.nome_arquivo, 'PNG')
 
@@ -78,5 +88,8 @@ class Wallpaper:
 
                 elif simbolo.tipo == 'importado':
                     imagem.png_importados.append(simbolo.valor)
+
+                elif simbolo.tipo == 'filtro':
+                    imagem.filtros.append(simbolo.valor)
 
             imagem.desenharImagem()

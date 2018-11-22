@@ -1,11 +1,8 @@
+#!/usr/bin/python3.7
 #-*- coding utf8 -*-
+
 import PIL
-
-class Posicao():
-    def __init__(self,x=None,y=None):
-        self.x = x
-        self.y = y
-
+from .utils import Tamanho, Posicao
 
 class Elemento():
     """
@@ -14,18 +11,41 @@ class Elemento():
     pass
 
 
-class Imagem(elemento):
+class Imagem(Elemento):
     """
         Classe de imagens
     """
     pass
 
 
-class Cor(elemento):
+class Cor(Elemento):
     """
         Classe de cores
     """
-    pass
+    def __init__(self, cor=(0,0,0)):
+        if isinstance(cor, tuple) and len(tuple) == 3:
+            (self.__r, self.__g, self.__b) = tuple
+            self.__cor = tuple
+            self.__tipo_cor = "rgb"
+        else:
+            self.__cor = tuple
+            self.__tipo_cor = "hex"
+
+    def get_cor(self):
+        return self.__cor
+
+    def set_cor(self, cor=(0,0,0)):
+        if isinstance(cor, tuple) and len(tuple) == 3:
+            (self.__r, self.__g, self.__b) = tuple
+            self.__cor = tuple
+            self.__tipo_cor = "rgb"
+            return True
+        else:
+            self.__cor = tuple
+            self.__tipo_cor = "hex"
+            return True
+
+        return False
 
 
 class Programa():
@@ -35,8 +55,5 @@ class Programa():
     def __init__(self):
         pass
 
-    def declare_wallpaper(self):
-        pass
-
-    def declare_cor(self):
+    def declare_elemento(self, elemento):
         pass

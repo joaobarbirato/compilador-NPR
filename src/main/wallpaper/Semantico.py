@@ -15,6 +15,7 @@ class Semantico(wallpaperVisitor):
         self.tabela_forma = None
         self.conteudoImagem = []
         self.caminhos_importado = None
+        self.filtros = []
 
     def visitPrograma(self, ctx: wallpaperParser.ProgramaContext):
         wallpaperVisitor.visitPrograma(self, ctx)
@@ -59,7 +60,6 @@ class Semantico(wallpaperVisitor):
                 print('Erro: Imagem já possui um nome de arquivo.')
                 return
 
-
         elif ctx.conteudo():
             for conteudo in self.conteudoImagem:
                 if conteudo == self.tabela_imagem.nome_tabela:
@@ -68,6 +68,20 @@ class Semantico(wallpaperVisitor):
 
             self.conteudoImagem.append(self.tabela_imagem.nome_tabela)
             self.visitConteudo(ctx.conteudo())
+
+        elif ctx.filtro():
+            self.visitFiltro(ctx.filtro())
+            for filtro in self.filtros:
+                self.tabela_imagem.addSimbolo(Simbolo("filtro", filtro))
+
+    def visitFiltro(self, ctx: wallpaperParser.FiltroContext):
+        for ctx_f_o in ctx.filtro_opcoes():
+            self.visitFiltro_opcoes(ctx_f_o)
+
+    def visitFiltro_opcoes(self, ctx: wallpaperParser.Filtro_opcoesContext):
+        texto_filtro = ctx.getText()
+        if texto_filtro not in self.filtros:
+            self.filtros.append(texto_filtro)
 
     def visitConteudo(self, ctx: wallpaperParser.ConteudoContext):
         for referencia in ctx.referencia():
