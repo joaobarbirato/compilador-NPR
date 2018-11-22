@@ -97,8 +97,7 @@ posicao
 
 //Regras referentes a texto na img
 texto
-    : 'texto'
-    ;
+    : 'texto' ;
 
 atributos_texto
     : chave posicao_inicial corpo_texto //alinhamento

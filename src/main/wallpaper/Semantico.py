@@ -103,10 +103,12 @@ class Semantico(wallpaperVisitor):
         self.tabela_forma = None
 
     def visitValores(self, ctx: wallpaperParser.ValoresContext):
-        self.visitAtributos_forma(ctx.atributos_forma())
-        self.tabela_forma.addSimbolo(Simbolo('formato', ctx.forma().getText()))
-        self.visitAtributos_texto(ctx.atributos_texto())
-        self.tabela_forma.addSimbolo(Simbolo('texto', ctx.texto().getText()))
+        if ctx.atributos_forma() is not None:
+            self.visitAtributos_forma(ctx.atributos_forma())
+            self.tabela_forma.addSimbolo(Simbolo('formato', ctx.forma().getText()))
+        if ctx.atributos_texto() is not None:
+            self.visitAtributos_texto(ctx.atributos_texto())
+            self.tabela_forma.addSimbolo(Simbolo('texto', ctx.texto().getText()))
 
     def visitAtributos_forma(self, ctx:wallpaperParser.Atributos_formaContext):
 
@@ -141,9 +143,9 @@ class Semantico(wallpaperVisitor):
             Simbolo('posicao', (int(posicao.NUM_INT(0).getText()), int(posicao.NUM_INT(1).getText()),
                                 int(posicao.NUM_INT(2).getText()), int(posicao.NUM_INT(3).getText()))))
 
-    def visitAtributos_texto(self, ctx: wallpaperParser.Atributos_textoContext):
 
-        if not ctx.chave().getText():
+    def visitAtributos_texto(self, ctx: wallpaperParser.Atributos_textoContext):
+        if not ctx.chave().IDENT():
             print('Erro: O atributo corpo_ é obrigatório para textos')
             return  # exit()
 
@@ -152,24 +154,23 @@ class Semantico(wallpaperVisitor):
             return
         else:
             # adiciona uma entrada do tipo chave na tabela de simbolos da imagem
-            self.tabela_texto.addSimbolo(Simbolo('chave', ctx.chave().IDENT().getText()))
+            #self.tabela_texto.addSimbolo(Simbolo('chave', ctx.chave().IDENT().getText()))
 
             # atribui a tabela de texto para a tabela auxiliar
             self.tabela_texto = TabelaSimbolo(ctx.chave().IDENT().getText())
-            self.formas.addTabela(self.tabela_texto)
+            self.texto.addTabela(self.tabela_texto)
 
-            if not ctx.posicao_inicial().NUM_INT:
-                print('Erro: O atributo posição_inicial é obrigatório para texto')
-                return
+        if not ctx.posicao_inicial().NUM_INT:
+            print('Erro: O atributo posição_inicial é obrigatório para texto')
+            return
 
-            posicao_inicial = ctx.posicao_inicial()
-            self.tabela_texto.addSimbolo(
-                Simbolo('posicao_inicial', (int(posicao_inicial.NUM_INT(0).getText()), int(posicao_inicial.NUM_INT(1).getText()))))
+        posicao_inicial = ctx.posicao_inicial()
+        self.tabela_texto.addSimbolo(
+            Simbolo('posicao_inicial', (int(posicao_inicial.NUM_INT(0).getText()), int(posicao_inicial.NUM_INT(1).getText()))))
 
-            if not ctx.corpo_texto().IDENT():
-                print('Erro: O atributo corpo_texto é obrigatório para texto')
-                return
+        if not ctx.corpo_texto().IDENT():
+            print('Erro: O atributo corpo_texto é obrigatório para texto')
+            return
 
-            corpo_texto = ctx.corpo_texto()
-            self.tabela_texto.addSimbolo(
-                Simbolo('corpo_texto', corpo_texto().IDENT().getText()))
+        corpo_texto = ctx.corpo_texto()
+        self.tabela_texto.addSimbolo(Simbolo('corpo_texto', corpo_texto.IDENT().getText()))

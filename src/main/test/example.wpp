@@ -12,6 +12,7 @@ img1.conteudo = {
 		cor = 0x000000
 		posicao = (90, 80, 500, 400)
     ]
+
     texto = [
         chave = texto1
         posicao_inicial = (30, 30)
