@@ -8,13 +8,16 @@ imagem.conteudo = {
         chave = doge
         caminho = "doge.png"
         posicao = (100, 100)
-        tamanho = (500, 500)
     ]
     retangulo = [
         chave = ret1
         cor = 0xFF0000
-        posicao = (50, 100)
-        tamanho = (50, 50, 200, 200)
+        posicao = (50, 50, 200, 200)
+    ]
+    retangulo = [
+        chave = ret2
+        cor = 0xFF0000
+        posicao = (100, 50, 600, 300)
     ]
 }
 
