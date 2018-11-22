@@ -3,8 +3,9 @@ img.cor = 0x000000
 img.tamanho = (500, 500)
 img.conteudo = {
     circulo = [
+        chave = c1
         cor = 0xFF0000
         posicao = (50, 50, 100, 100)
     ]
 }
-img.nome = "oi.png"
+img.nome = "src/main/test/out/sol.png"
