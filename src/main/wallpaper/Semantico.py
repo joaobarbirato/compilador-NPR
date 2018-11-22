@@ -7,12 +7,16 @@ class Semantico(wallpaperVisitor):
     def __init__(self):
         self.imagens = ListaTabela()
         self.formas = ListaTabela()
+        self.texto = ListaTabela()
         # tabela auxiliar para guardar a tabela atual de imagem
         # permite passar uma tabela pelas funções
         self.tabela_imagem = None
         # tabela auxiliar para guardar a tabela atual de forma
         # permite passar uma tabela pelas funções
         self.tabela_forma = None
+        # tabela auxiliar para guardar a tabela atual de texto
+        # permite passar uma tabela pelas funções
+        self.tabela_texto = None
         self.conteudoImagem = []
         self.caminhos_importado = None
         self.filtros = []
@@ -119,7 +123,7 @@ class Semantico(wallpaperVisitor):
 
     def visitValores(self, ctx: wallpaperParser.ValoresContext):
         if ctx.forma():
-            self.visitAtributos(ctx.atributos())
+            self.visitAtributos_forma(ctx.atributos_forma())
             self.tabela_forma.addSimbolo(Simbolo('formato', ctx.forma().getText()))
         elif ctx.caminho():
             self.visitCaminho(ctx.caminho())
@@ -129,20 +133,22 @@ class Semantico(wallpaperVisitor):
                 if ctx.posicao_importado() else None
 
             self.tabela_imagem.addSimbolo(Simbolo('importado', (self.caminhos_importado, __tamanho, __posicao)))
+        elif ctx.atributos_texto():
+            self.visitAtributos_texto(ctx.atributos_texto())
 
     def visitCaminho(self, ctx:wallpaperParser.CaminhoContext):
         caminhos = ctx.CAMINHO()
         if caminhos:
             self.caminhos_importado = caminhos.getText().replace('"','')
 
-    def visitAtributos(self, ctx: wallpaperParser.AtributosContext):
+    def visitAtributos_forma(self, ctx:wallpaperParser.Atributos_formaContext):
 
         if not ctx.chave().getText():
             print('Erro: O atributo chave é obrigatório para formas')
             return  # exit()
 
         # Verifica se já foi declarado o identificador da forma (chave)
-        if self.formas.exist(ctx.chave().IDENT()) or self.imagens.exist(ctx.chave().IDENT()):
+        if self.formas.exist(ctx.chave().IDENT()) or self.imagens.exist(ctx.chave().IDENT()) or self.texto.exist(ctx.chave().IDENT()):
             print('Erro: O identificador ' + ctx.chave().IDENT().getText() + ' já foi declarado.')
             return
         else:
@@ -167,3 +173,35 @@ class Semantico(wallpaperVisitor):
         self.tabela_forma.addSimbolo(
             Simbolo('posicao', (int(posicao.NUM_INT(0).getText()), int(posicao.NUM_INT(1).getText()),
                                 int(posicao.NUM_INT(2).getText()), int(posicao.NUM_INT(3).getText()))))
+
+
+    def visitAtributos_texto(self, ctx: wallpaperParser.Atributos_textoContext):
+        if not ctx.chave().IDENT():
+            print('Erro: O atributo corpo_ é obrigatório para textos')
+            return  # exit()
+
+        if self.formas.exist(ctx.chave().IDENT()) or self.imagens.exist(ctx.chave().IDENT()) or self.texto.exist(ctx.chave().IDENT()):
+            print('Erro: O identificador ' + ctx.chave().IDENT().getText() + ' já foi declarado.')
+            return
+        else:
+            # adiciona uma entrada do tipo chave na tabela de simbolos da imagem
+            #self.tabela_texto.addSimbolo(Simbolo('chave', ctx.chave().IDENT().getText()))
+
+            # atribui a tabela de texto para a tabela auxiliar
+            self.tabela_texto = TabelaSimbolo(ctx.chave().IDENT().getText())
+            self.texto.addTabela(self.tabela_texto)
+
+        if not ctx.posicao_inicial().NUM_INT:
+            print('Erro: O atributo posição_inicial é obrigatório para texto')
+            return
+
+        posicao_inicial = ctx.posicao_inicial()
+        self.tabela_texto.addSimbolo(
+            Simbolo('posicao_inicial', (int(posicao_inicial.NUM_INT(0).getText()), int(posicao_inicial.NUM_INT(1).getText()))))
+
+        if not ctx.corpo_texto().IDENT():
+            print('Erro: O atributo corpo_texto é obrigatório para texto')
+            return
+
+        corpo_texto = ctx.corpo_texto()
+        self.tabela_texto.addSimbolo(Simbolo('corpo_texto', corpo_texto.IDENT().getText()))

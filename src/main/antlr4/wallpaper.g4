@@ -77,13 +77,15 @@ conteudo
     : 'conteudo' '=' '{' (valores|referencia)+ '}'
     ;
 
-valores
-    : forma '=' '[' atributos ']'
-    | 'importado' '=' '[' caminho tamanho? posicao_importado? ']'
-    ;
 
 caminho
     :  'caminho' '=' CAMINHO
+    ;
+    
+valores
+    : forma '=' '[' atributos_forma ']'
+    | 'importado' '=' '[' caminho tamanho? posicao_importado? ']'
+    | texto '=' '[' atributos_texto ']'
     ;
 
 posicao_importado
@@ -98,7 +100,7 @@ forma
     : 'retangulo' | 'triangulo' | 'circulo' | 'texto'
     ;
 
-atributos
+atributos_forma
     : chave cor posicao
     ;
 
@@ -116,6 +118,26 @@ tamanho
 
 posicao
     : 'posicao' '=' '(' NUM_INT ',' NUM_INT ',' NUM_INT ',' NUM_INT ')'
+    ;
+
+//Regras referentes a texto na img
+texto
+    : 'texto' ;
+
+atributos_texto
+    : chave posicao_inicial corpo_texto
+    ;
+
+posicao_inicial
+    : 'posicao_inicial' '=' '(' NUM_INT ',' NUM_INT ')'
+    ;
+
+corpo_texto
+    : 'corpo_texto' '=' IDENT
+    ;
+
+alinhamento
+    : 'direita' | 'centro' | 'direita'
     ;
 
 nome_arquivo

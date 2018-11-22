@@ -17,24 +17,34 @@ def main(argv):
     analisador_semantico = Semantico()
     analisador_semantico.visitPrograma(tree)
 
-    # print('----- Imagens -----')
-    # for tabela in analisador_semantico.imagens.tabelas:
-    #     print(tabela.nome_tabela)
-    #     for simbolo in tabela.simbolos:
-    #         print(simbolo.tipo, simbolo.valor)
-    #     print()
+    print('----- Imagens -----')
+    for tabela in analisador_semantico.imagens.tabelas:
+        print(tabela.nome_tabela)
+        for simbolo in tabela.simbolos:
+            print(simbolo.tipo, simbolo.valor)
+        print()
 
-    # print('----- Formas -----')
-    # for tabela in analisador_semantico.formas.tabelas:
-    #     print()
-    #     print(tabela.nome_tabela)
-    #     for simbolo in tabela.simbolos:
-    #         print(simbolo.tipo, simbolo.valor)
-    #     print()
+
+    print('----- Formas -----')
+    for tabela in analisador_semantico.formas.tabelas:
+        print('------\n')
+        print(tabela.nome_tabela)
+        for simbolo in tabela.simbolos:
+            print(simbolo.tipo, simbolo.valor)
+
+    print()
+
+    print('----- Textos -----')
+    for tabela in analisador_semantico.texto.tabelas:
+        print('------\n')
+        print(tabela.nome_tabela)
+        for simbolo in tabela.simbolos:
+            print(simbolo.tipo, simbolo.valor)
 
     imagens = analisador_semantico.imagens
     formas = analisador_semantico.formas
-    w = Wallpaper(imagens, formas)
+    textos = analisador_semantico.texto
+    w = Wallpaper(imagens, formas, textos)
     w.run()
 
 if __name__ == '__main__':

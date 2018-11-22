@@ -25,6 +25,12 @@ img1.conteudo = {
         tamanho = (50, 50)
         posicao = (100, 100)
     ]
+
+    texto = [
+        chave = texto1
+        posicao_inicial = (30, 30)
+        corpo_texto = Helloworld
+    ]
 }
 
 img.conteudo = {
