@@ -107,7 +107,10 @@ class Wallpaper:
                 elif simbolo.tipo == 'filtro':
                     imagem.filtros.append(simbolo.valor)
 
-                elif simbolo.tipo == 'texto':
+                elif simbolo.tipo == 'posicao_inicial':
+                    imagem.textos.append(simbolo.valor)
+
+                elif simbolo.tipo == 'corpo_texto':
                     imagem.textos.append(simbolo.valor)
 
             imagem.desenharImagem()
