@@ -66,11 +66,11 @@ propriedade
     ;
 
 filtro
-    : 'filtro' '=' filtro_opcoes (',' filtro_opcoes)*
+    : 'filtro' '=' filtro_opcoes
     ;
 
 filtro_opcoes
-    : 'desfoque' | 'suavizacao' | 'contorno'
+    : 'desfoque' | 'relevo' | 'contorno'
     ;
 
 conteudo
@@ -79,15 +79,15 @@ conteudo
 
 valores
     : forma '=' '[' atributos ']'
-    | 'importado' '=' '[' chave caminho tamanho? posicao_importado? ']'
+    | 'importado' '=' '[' chave caminho tamanho? ']'
+    ;
+
+atributos
+    : chave cor posicao
     ;
 
 caminho
     :  'caminho' '=' CAMINHO
-    ;
-
-posicao_importado
-    :   'posicao' '=' '(' NUM_INT ',' NUM_INT ')'
     ;
 
 referencia
@@ -96,10 +96,6 @@ referencia
 
 forma
     : 'retangulo' | 'triangulo' | 'circulo' | 'texto'
-    ;
-
-atributos
-    : chave cor posicao
     ;
 
 chave
@@ -115,13 +111,9 @@ tamanho
     ;
 
 posicao
-    : 'posicao' '=' '(' NUM_INT ',' NUM_INT ',' NUM_INT ',' NUM_INT ')'
+    : 'posicao' '=' '(' NUM_INT ',' NUM_INT (',' NUM_INT ',' NUM_INT)+ ')'
     ;
 
 nome_arquivo
     : 'nome' '=' CAMINHO
-    ;
-
-tipo_arquivo
-    : 'jpg' | 'png'
     ;

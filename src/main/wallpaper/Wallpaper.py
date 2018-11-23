@@ -1,11 +1,5 @@
 from PIL import Image, ImageDraw, ImageFilter
 
-_DICT_FILTROS = {
-    'contorno': ImageFilter.CONTOUR,
-    'suavizacao': ImageFilter.SMOOTH,
-    'desfoque': ImageFilter.BLUR
-}
-
 CUR_DIR = 'src/main/test/'
 
 
@@ -26,8 +20,8 @@ class Forma:
         elif self.formato == 'circulo':
             draw.ellipse(self.posicao, fill=rgb(self.cor[2:]))
         elif self.formato == 'triangulo':
-            draw.polygon(self.posicao, fill=(self.cor[2:]))
-
+            print(self.posicao)
+            draw.polygon(self.posicao, fill=rgb(self.cor[2:]))
 
 class Imagem:
     def __init__(self):
@@ -35,8 +29,9 @@ class Imagem:
         self.tamanho = None
         self.nome_arquivo = None
         self.formas = []
-        self.png_importados = []
-        self.filtros = []
+        self.importados = []
+        self.filtro = None
+        self.formatoimg = None
 
     def desenharImagem(self):
         pillowImagem = Image.new('RGBA', self.tamanho, rgb(self.cor[2:]))
@@ -44,18 +39,29 @@ class Imagem:
         for forma in self.formas:
             forma.desenharForma(draw)
         
-        for (caminho, tamanho, posicao) in self.png_importados:
-            pngImagem = Image.open(CUR_DIR + caminho)
+        for (caminho, tamanho) in self.importados:
+            Imagem = Image.open(CUR_DIR + caminho)
             if tamanho is not None:
-                pngImagem = pngImagem.resize(tamanho)
+                Imagem = Imagem.resize(tamanho)
 
-            pillowImagem.paste(pngImagem, box=posicao, mask=pngImagem)
+            pillowImagem.paste(Imagem, box=tamanho, mask=Imagem)
 
-        for filtro in self.filtros:
-            pillowImagem.filter(_DICT_FILTROS[filtro])
+        s = self.nome_arquivo
+        s += str('.png')
 
-        pillowImagem.save(self.nome_arquivo, 'PNG')
+        if self.filtro == None:
+            pillowImagem.save(s, 'PNG')
+        else:
 
+            if self.filtro == 'contorno':
+                imgout = pillowImagem.filter(ImageFilter.CONTOUR)
+                imgout.save(s, 'PNG')
+            if self.filtro == 'relevo':
+                imgout = pillowImagem.filter(ImageFilter.EMBOSS)
+                imgout.save(s, 'PNG')
+            if self.filtro == 'desfoque':
+                imgout = pillowImagem.filter(ImageFilter.BLUR)
+                imgout.save(s, 'PNG')
 
 class Wallpaper:
     def __init__(self, imagens, formas):
@@ -87,9 +93,9 @@ class Wallpaper:
                             imagem.formas.append(forma)
 
                 elif simbolo.tipo == 'importado':
-                    imagem.png_importados.append(simbolo.valor)
+                    imagem.importados.append(simbolo.valor)
 
                 elif simbolo.tipo == 'filtro':
-                    imagem.filtros.append(simbolo.valor)
+                    imagem.filtro = simbolo.valor
 
             imagem.desenharImagem()
