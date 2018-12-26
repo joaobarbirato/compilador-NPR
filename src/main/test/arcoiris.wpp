@@ -1,0 +1,62 @@
+Img foiosaitoqperguntou;
+
+foiosaitoqperguntou.tamanho = (1000,500)
+foiosaitoqperguntou.cor = 0xFFFFFF
+
+foiosaitoqperguntou.conteudo = {
+    circulo = [
+        chave = c1
+        cor = 0xFF0000
+        posicao = (200, 10, 1200, 1000)
+    ]
+    circulo = [
+        chave = c2
+        cor = 0xFF7F00
+        posicao = (200, 60, 1220, 1050)
+    ]
+    circulo = [
+        chave = c3
+        cor = 0xFFFF00
+        posicao = (200, 110, 1240, 1100)
+    ]
+    circulo = [
+        chave = c4
+        cor = 0x00FF00
+        posicao = (200, 160, 1260, 1150)
+    ]
+    circulo = [
+        chave = c5
+        cor = 0x0000FF
+        posicao = (200, 210, 1280, 1200)
+    ]
+    circulo = [
+        chave = c6
+        cor = 0x8B00FF
+        posicao = (200, 260, 1300, 1250)
+    ]
+    circulo = [
+        chave = c7
+        cor = 0xFFFFFF
+        posicao = (200, 310, 1300, 1300)
+    ]
+    circulo = [
+        chave = c8
+        cor = 0xFF0FF
+        posicao = (200, 350, 195, 450)
+    ]
+    circulo = [
+        chave = nuvem1
+        cor = 0xccffff
+        posicao = (220, 410, 320, 510)
+    ]
+    copia -> foiosaitoqperguntou.nuvem1 [
+        chave = nuvem2
+        posicao = (150, 410, 250, 510)
+    ]
+    copia -> foiosaitoqperguntou.nuvem1 [
+        chave = nuvem3
+        posicao = (290, 410, 390, 510)
+    ]
+}
+
+foiosaitoqperguntou.nome = "src/main/test/out/arcoiris"

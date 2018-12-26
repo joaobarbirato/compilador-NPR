@@ -124,11 +124,11 @@ class Semantico(wallpaperVisitor):
         self.tabela_imagem.addSimbolo(Simbolo("filtro", filtro))
 
     def visitConteudo(self, ctx: wallpaperParser.ConteudoContext):
-        for referencia in ctx.referencia():
-            self.visitReferencia(referencia)
-
         for valor in ctx.valores():
             self.visitValores(valor)
+
+        for referencia in ctx.referencia():
+            self.visitReferencia(referencia)
 
     def visitReferencia(self, ctx: wallpaperParser.ReferenciaContext):
         # verificar primeiro IDENT tabela de imagens
@@ -183,7 +183,6 @@ class Semantico(wallpaperVisitor):
         if not ctx.chave().getText():
             self.existe_erros = True
             return  # exit()
-
         # Verifica se já foi declarado o identificador da forma (chave)
         if self.formas.exist(ctx.chave().IDENT()) or self.imagens.exist(ctx.chave().IDENT()):
             self.erros.adiciona_erro('Erro: O identificador ' + ctx.chave().IDENT().getText() + ' já foi declarado.')

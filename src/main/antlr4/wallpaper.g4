@@ -24,7 +24,7 @@ HEX
     ;
 
 NUM_INT
-    : (ALGARISMO)+
+    : '-'? (ALGARISMO)+
     ;
 
 NUM_REAL
@@ -95,7 +95,7 @@ referencia
     ;
 
 forma
-    : 'retangulo' | 'triangulo' | 'circulo' | 'texto'
+    : 'retangulo' | 'triangulo' | 'circulo'
     ;
 
 chave

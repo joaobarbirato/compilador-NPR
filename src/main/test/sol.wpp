@@ -1,0 +1,26 @@
+Img img;
+img.cor = 0xc7fffe
+img.tamanho = (500, 500)
+img.conteudo = {
+    circulo = [
+        chave = c1
+        cor = 0xFF0000
+        posicao = (50, 50, 100, 100)
+    ]
+    retangulo = [
+        chave = r1
+        cor = 0xf5e1b8
+        posicao = (0, 400, 500, 500)
+    ]
+    circulo = [
+        chave = c2
+        cor = 0xFFFF00
+        posicao = (300, 150, 350, 200)
+    ]
+    importado = [
+        chave = coqueiro1
+        caminho = "coqueiro.png"
+        tamanho = (150,250)
+    ]
+}
+img.nome = "src/main/test/out/sol.png"

@@ -20,7 +20,6 @@ class Forma:
         elif self.formato == 'circulo':
             draw.ellipse(self.posicao, fill=rgb(self.cor[2:]))
         elif self.formato == 'triangulo':
-            print(self.posicao)
             draw.polygon(self.posicao, fill=rgb(self.cor[2:]))
 
 class Imagem:
