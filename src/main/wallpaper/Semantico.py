@@ -32,14 +32,14 @@ class Semantico(wallpaperVisitor):
         self.tabela_forma = None
         self.conteudoImagem = []
         self.caminhos_importado = None
-        self.filtros = []
+        self.filtro = None
         self.existe_erros = False
 
     def visitPrograma(self, ctx: wallpaperParser.ProgramaContext):
         if ctx.corpo():
             wallpaperVisitor.visitPrograma(self, ctx)
             for tabela in self.imagens.tabelas:
-                # lidando com erros dew falta de propriedades
+                # lidando com erros de falta de propriedades
                 if tabela.getSimbolo('cor') is None or tabela.getSimbolo('tamanho') is None:
                     if tabela.getSimbolo('cor') is None:
                         self.erros.adiciona_erro(
@@ -115,24 +115,20 @@ class Semantico(wallpaperVisitor):
 
         elif ctx.filtro():
             self.visitFiltro(ctx.filtro())
-            for filtro in self.filtros:
-                self.tabela_imagem.addSimbolo(Simbolo("filtro", filtro))
 
     def visitFiltro(self, ctx: wallpaperParser.FiltroContext):
-        for ctx_f_o in ctx.filtro_opcoes():
-            self.visitFiltro_opcoes(ctx_f_o)
+            self.visitFiltro_opcoes(ctx.filtro_opcoes())
 
     def visitFiltro_opcoes(self, ctx: wallpaperParser.Filtro_opcoesContext):
-        texto_filtro = ctx.getText()
-        if texto_filtro not in self.filtros:
-            self.filtros.append(texto_filtro)
+        filtro = ctx.getText()
+        self.tabela_imagem.addSimbolo(Simbolo("filtro", filtro))
 
     def visitConteudo(self, ctx: wallpaperParser.ConteudoContext):
-        for referencia in ctx.referencia():
-            self.visitReferencia(referencia)
-
         for valor in ctx.valores():
             self.visitValores(valor)
+
+        for referencia in ctx.referencia():
+            self.visitReferencia(referencia)
 
     def visitReferencia(self, ctx: wallpaperParser.ReferenciaContext):
         # verificar primeiro IDENT tabela de imagens
@@ -140,8 +136,8 @@ class Semantico(wallpaperVisitor):
         # verificar terceiro IDENT que é o chave da nova forma
 
         copy_forma = self.formas.getTabela(ctx.IDENT(1))
-        self.tabela_forma = TabelaSimbolo(ctx.IDENT(2).getText())                          #--------
-        self.tabela_imagem.addSimbolo(Simbolo('chave', ctx.IDENT(2).getText()))         #----------
+        self.tabela_forma = TabelaSimbolo(ctx.IDENT(2).getText())
+        self.tabela_imagem.addSimbolo(Simbolo('chave', ctx.IDENT(2).getText()))
 
         if ctx.cor():
             self.tabela_forma.addSimbolo(Simbolo('cor', ctx.cor().HEX()))
@@ -171,10 +167,8 @@ class Semantico(wallpaperVisitor):
                 self.visitCaminho(ctx.caminho())
                 __tamanho = (int(ctx.tamanho().NUM_INT(0).getText()), int(ctx.tamanho().NUM_INT(1).getText())) \
                     if ctx.tamanho() else None
-                __posicao = (int(ctx.posicao_importado().NUM_INT(0).getText()), int(ctx.posicao_importado().NUM_INT(1).getText())) \
-                    if ctx.posicao_importado() else None
 
-                self.tabela_imagem.addSimbolo(Simbolo('importado', (self.caminhos_importado, __tamanho, __posicao)))
+                self.tabela_imagem.addSimbolo(Simbolo('importado', (self.caminhos_importado, __tamanho)))
 
             else:
                 self.existe_erros = True
@@ -184,12 +178,11 @@ class Semantico(wallpaperVisitor):
         if caminhos:
             self.caminhos_importado = caminhos.getText().replace('"','')
 
-    def visitAtributos(self, ctx: wallpaperParser.AtributosContext):
+    def visitAtributos(self, ctx:wallpaperParser.AtributosContext):
 
         if not ctx.chave().getText():
             self.existe_erros = True
             return  # exit()
-
         # Verifica se já foi declarado o identificador da forma (chave)
         if self.formas.exist(ctx.chave().IDENT()) or self.imagens.exist(ctx.chave().IDENT()):
             self.erros.adiciona_erro('Erro: O identificador ' + ctx.chave().IDENT().getText() + ' já foi declarado.')
@@ -200,7 +193,7 @@ class Semantico(wallpaperVisitor):
             self.tabela_imagem.addSimbolo(Simbolo('chave', ctx.chave().IDENT().getText()))
 
             # atribui a tabela de forma para a tabela auxiliar
-            self.tabela_forma = TabelaSimbolo(ctx.chave().IDENT().getText())       #=========
+            self.tabela_forma = TabelaSimbolo(ctx.chave().IDENT().getText())
             self.formas.addTabela(self.tabela_forma)
 
         if not ctx.cor().HEX():
@@ -214,6 +207,13 @@ class Semantico(wallpaperVisitor):
             return
 
         posicao = ctx.posicao()
-        self.tabela_forma.addSimbolo(
-            Simbolo('posicao', (int(posicao.NUM_INT(0).getText()), int(posicao.NUM_INT(1).getText()),
-                                int(posicao.NUM_INT(2).getText()), int(posicao.NUM_INT(3).getText()))))
+        if ctx.posicao().NUM_INT(5) == None:
+            self.tabela_forma.addSimbolo(
+                Simbolo('posicao', (int(posicao.NUM_INT(0).getText()), int(posicao.NUM_INT(1).getText()),
+                                    int(posicao.NUM_INT(2).getText()), int(posicao.NUM_INT(3).getText()))))
+
+        else:
+            self.tabela_forma.addSimbolo(
+                Simbolo('posicao', (int(posicao.NUM_INT(0).getText()), int(posicao.NUM_INT(1).getText()),
+                                    int(posicao.NUM_INT(2).getText()), int(posicao.NUM_INT(3).getText()),
+                                    int(posicao.NUM_INT(4).getText()), int(posicao.NUM_INT(5).getText()))))
